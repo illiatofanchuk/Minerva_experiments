@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Minerva — Find Italian partners who share how you operate</title>
+  <meta name="description" content="B2B matchmaking for Italian PMI on 47 dimensions of operating culture. Verified through Camera di Commercio. GDPR by design." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: 'var(--bg)',
+            surface: 'var(--surface)',
+            'surface-alt': 'var(--surface-alt)',
+            fg: 'var(--fg)',
+            'fg-muted': 'var(--fg-muted)',
+            'fg-subtle': 'var(--fg-subtle)',
+            primary: 'var(--primary)',
+            'on-primary': 'var(--on-primary)',
+            'primary-hover': 'var(--primary-hover)',
+            accent: 'var(--accent)',
+            'accent-strong': 'var(--accent-strong)',
+            border: 'var(--border)',
+            'border-strong': 'var(--border-strong)',
+            muted: 'var(--muted)',
+            success: 'var(--success)',
+          },
+          fontFamily: {
+            sans: ['"IBM Plex Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          maxWidth: {
+            container: '72rem',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-alt: #F1F4F8;
+      --fg: #020617;
+      --fg-muted: #475569;
+      --fg-subtle: #64748B;
+      --primary: #0F172A;
+      --on-primary: #FFFFFF;
+      --primary-hover: #1E293B;
+      --accent: #0369A1;
+      --accent-strong: #075985;
+      --border: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --muted: #E8ECF1;
+      --success: #15803D;
+    }
+    .dark {
+      --bg: #0E1117;
+      --surface: #161B22;
+      --surface-alt: #1A2230;
+      --fg: #E6EAF2;
+      --fg-muted: #A6B0C0;
+      --fg-subtle: #8B95A7;
+      --primary: #E6EAF2;
+      --on-primary: #0F172A;
+      --primary-hover: #F1F5F9;
+      --accent: #38BDF8;
+      --accent-strong: #7DD3FC;
+      --border: #222A36;
+      --border-strong: #2E3847;
+      --muted: #1A2230;
+      --success: #22C55E;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      font-feature-settings: 'ss01' on, 'cv11' on;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .display { font-size: clamp(1.625rem, 5.5vw, 3.75rem); line-height: 1.1; letter-spacing: -0.025em; }
+    .h1 { font-size: clamp(1.5rem, 3.6vw, 2.5rem); line-height: 1.15; letter-spacing: -0.02em; }
+    .h2 { font-size: clamp(1.125rem, 1.9vw, 1.625rem); line-height: 1.3; letter-spacing: -0.01em; }
+    .body-lg { font-size: clamp(0.9375rem, 1.2vw, 1.1875rem); line-height: 1.55; }
+
+    /* Mobile safety net: never allow horizontal scroll */
+    html, body { overflow-x: hidden; }
+    /* Allow long words (company names) to break cleanly at mobile widths */
+    h1, h2, h3 { overflow-wrap: break-word; word-wrap: break-word; }
+
+    /* Focus visibility: 2px ring + 2px offset on every interactive */
+    :is(a, button, summary, input, [role="button"]):focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Accordion icon rotation */
+    details[open] > summary .chev { transform: rotate(180deg); }
+    summary::-webkit-details-marker { display: none; }
+    summary { list-style: none; cursor: pointer; }
+
+    /* Comparison table row hover */
+    tbody tr:hover { background-color: var(--surface-alt); }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-bg text-fg antialiased">
+
+  <!-- =================================== NAV =================================== -->
+  <header class="sticky top-0 z-50 bg-bg/85 backdrop-saturate-150 border-b border-border" style="-webkit-backdrop-filter: saturate(1.5); backdrop-filter: saturate(1.5);">
+    <div class="max-w-container mx-auto px-6 lg:px-8">
+      <nav class="flex h-16 items-center justify-between">
+        <a href="#top" class="flex items-center gap-2.5 -ml-1 px-1 py-1 rounded">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-primary">
+            <path d="M3 21V7l9-4 9 4v14" />
+            <path d="M3 21h18" />
+            <path d="M9 21V12h6v9" />
+          </svg>
+          <span class="font-semibold tracking-tight text-[1.0625rem]">Minerva</span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-7 text-sm">
+          <a href="#how" class="text-fg-muted hover:text-fg transition-colors duration-150">Product</a>
+          <a href="#pricing" class="text-fg-muted hover:text-fg transition-colors duration-150">Pricing</a>
+          <a href="#trust" class="text-fg-muted hover:text-fg transition-colors duration-150">Trust</a>
+          <a href="#faq" class="text-fg-muted hover:text-fg transition-colors duration-150">FAQ</a>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" type="button" aria-label="Toggle dark mode" class="h-10 w-10 inline-flex items-center justify-center rounded-md text-fg-muted hover:text-fg hover:bg-muted transition-colors duration-150">
+            <svg id="icon-sun" class="hidden dark:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+            <svg id="icon-moon" class="block dark:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+          <a href="#cta" class="hidden sm:inline-flex text-sm text-fg-muted hover:text-fg px-3 h-10 items-center rounded-md transition-colors duration-150">Sign in</a>
+          <a href="#cta" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover transition-colors duration-150">
+            Request a demo
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- =================================== HERO =================================== -->
+    <section class="relative overflow-hidden">
+      <div class="max-w-container mx-auto px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <!-- Left: copy -->
+          <div class="lg:col-span-7">
+            <p class="text-sm font-medium text-accent mb-5">For Italian PMI · Verified through Camera di Commercio</p>
+            <h1 class="display font-semibold text-fg mb-6">
+              Find Italian partners who share <span class="text-fg-muted">how</span> you operate.
+            </h1>
+            <p class="body-lg text-fg-muted max-w-[36rem] mb-8">
+              Minerva matches small and medium enterprises on 47 dimensions of operating culture — beyond sector and revenue. Decision velocity, risk posture, governance maturity. The signals that decide whether a partnership survives year two.
+            </p>
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-10">
+              <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
+                Request a demo
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="#pricing" class="inline-flex items-center gap-1.5 h-12 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
+                View the free plan
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Inline trust facts -->
+            <dl class="grid grid-cols-3 gap-x-6 gap-y-2 max-w-[34rem] pt-6 border-t border-border">
+              <div>
+                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Dimensions</dt>
+                <dd class="font-mono text-lg font-medium mt-1">47</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Verified PMI</dt>
+                <dd class="font-mono text-lg font-medium mt-1">200+</dd>
+              </div>
+              <div>
+                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Avg first match</dt>
+                <dd class="font-mono text-lg font-medium mt-1">72 h</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- Right: synthetic compatibility scorecard -->
+          <div class="lg:col-span-5">
+            <div class="relative">
+              <!-- Sub-card behind for depth (no shadow, no glow — just offset border) -->
+              <div aria-hidden="true" class="absolute inset-0 translate-x-3 translate-y-3 rounded-xl border border-border bg-surface-alt"></div>
+              <div class="relative rounded-xl border border-border bg-surface p-6 lg:p-7">
+                <div class="flex items-center justify-between text-xs text-fg-subtle mb-5">
+                  <span class="inline-flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+                    Match card
+                  </span>
+                  <span class="font-mono">#MIN-04821</span>
+                </div>
+
+                <!-- Companies -->
+                <div class="space-y-3 mb-6">
+                  <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded bg-muted flex items-center justify-center text-[0.6875rem] font-mono font-medium text-fg-muted">TB</div>
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold truncate">Tessuti Belluno SpA</div>
+                      <div class="text-xs text-fg-subtle">Textile manufacturing · Veneto</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded bg-muted flex items-center justify-center text-[0.6875rem] font-mono font-medium text-fg-muted">AD</div>
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold truncate">Aurora Digital SRL</div>
+                      <div class="text-xs text-fg-subtle">Software studio · Milano</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Score -->
+                <div class="pt-5 mb-5 border-t border-border flex items-baseline justify-between">
+                  <div>
+                    <div class="text-xs text-fg-subtle font-medium">Compatibility score</div>
+                    <div class="text-xs text-fg-subtle mt-0.5">weighted across 47 dimensions</div>
+                  </div>
+                  <div class="font-mono text-[2.25rem] leading-none font-medium tracking-tight">
+                    87<span class="text-base text-fg-subtle ml-1">/100</span>
+                  </div>
+                </div>
+
+                <!-- Dimensions list -->
+                <div class="space-y-2.5 mb-5">
+                  <!-- row -->
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
+                      <div class="h-full bg-accent" style="width: 82%"></div>
+                    </div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">82</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Decision velocity</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
+                      <div class="h-full bg-accent" style="width: 91%"></div>
+                    </div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">91</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Risk appetite</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
+                      <div class="h-full bg-accent" style="width: 74%"></div>
+                    </div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">74</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Governance maturity</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
+                      <div class="h-full bg-accent" style="width: 88%"></div>
+                    </div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">88</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Communication style</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
+                      <div class="h-full bg-accent" style="width: 85%"></div>
+                    </div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">85</span>
+                  </div>
+                </div>
+
+                <div class="pt-4 border-t border-border flex items-center justify-between text-xs">
+                  <span class="inline-flex items-center gap-1.5 text-fg-subtle">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    Verified · Camera di Commercio
+                  </span>
+                  <span class="font-mono text-fg-subtle">21 May 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== TRUST STRIP =================================== -->
+    <section aria-labelledby="trust-strip" class="border-y border-border bg-surface-alt">
+      <h2 id="trust-strip" class="sr-only">Trust signals</h2>
+      <div class="max-w-container mx-auto px-6 lg:px-8 py-8">
+        <ul class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6">
+          <li class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mt-0.5 shrink-0">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <div>
+              <div class="text-sm font-semibold">Camera di Commercio</div>
+              <div class="text-xs text-fg-subtle mt-0.5">P.IVA + ATECO verified at signup</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mt-0.5 shrink-0">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <div>
+              <div class="text-sm font-semibold">GDPR by design</div>
+              <div class="text-xs text-fg-subtle mt-0.5">EU data residency · no trackers</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mt-0.5 shrink-0">
+              <path d="M3 3v18h18" />
+              <path d="M7 16V8M12 16v-5M17 16v-3" />
+            </svg>
+            <div>
+              <div class="text-sm font-semibold">47 compatibility dimensions</div>
+              <div class="text-xs text-fg-subtle mt-0.5">Methodology published openly</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mt-0.5 shrink-0">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            <div>
+              <div class="text-sm font-semibold">72 h avg first match</div>
+              <div class="text-xs text-fg-subtle mt-0.5">Once your profile is complete</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- =================================== PROBLEM =================================== -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">The signal problem</p>
+          <h2 class="h1 font-semibold text-fg">Traditional B2B networking tells you what a company does — not how it operates.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
+          <article class="bg-surface p-8 lg:p-10">
+            <p class="text-xs font-medium text-fg-subtle mb-3 font-mono">01 · LINKEDIN</p>
+            <h3 class="h2 font-semibold mb-3">A feed, not a filter.</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Sales Navigator surfaces job titles, headcount, and funding round. None of that tells you whether a prospective partner shares your decision tempo, risk posture, or governance style — the things that determine whether a partnership survives the second year.
+            </p>
+          </article>
+          <article class="bg-surface p-8 lg:p-10">
+            <p class="text-xs font-medium text-fg-subtle mb-3 font-mono">02 · TRADE EVENTS</p>
+            <h3 class="h2 font-semibold mb-3">€2,000 for a stack of cards.</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Three days, a booth, a lanyard. The signal you actually need — how does this company operate behind the booth banner? — isn't there. You leave with contacts and no compatibility data.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== HOW =================================== -->
+    <section id="how" class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">How matching works</p>
+          <h2 class="h1 font-semibold text-fg">A ranked list, not a feed. A method, not a swipe.</h2>
+        </div>
+
+        <ol class="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <li class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="font-mono text-sm text-fg-subtle mb-5">Step 01</div>
+            <h3 class="h2 font-semibold mb-3">Profile your company.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6">
+              Twenty minutes of structured questions on 47 dimensions — operating culture, decision velocity, governance maturity, communication style, risk appetite, and 42 more. No free text, no marketing copy.
+            </p>
+            <div class="pt-5 border-t border-border space-y-2">
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">Time required</span>
+                <span class="font-mono">~20 min</span>
+              </div>
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">Format</span>
+                <span class="font-mono">Likert · multi-select</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="font-mono text-sm text-fg-subtle mb-5">Step 02</div>
+            <h3 class="h2 font-semibold mb-3">Algorithm ranks compatibility.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6">
+              The model weighs cultural fit and verified operational signals against what you're looking for — supplier, distributor, or complementary service partner. Every dimension's contribution is visible.
+            </p>
+            <div class="pt-5 border-t border-border space-y-2">
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">Weights</span>
+                <span class="font-mono">User-tunable</span>
+              </div>
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">Explainability</span>
+                <span class="font-mono">Per dimension</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="font-mono text-sm text-fg-subtle mb-5">Step 03</div>
+            <h3 class="h2 font-semibold mb-3">Review a calm ranked list.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6">
+              Matches arrive as a scannable list ordered by compatibility. Each card shows the breakdown by dimension. No feed mechanics, no swipe, no engagement metrics. You're here to make a decision.
+            </p>
+            <div class="pt-5 border-t border-border space-y-2">
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">First match</span>
+                <span class="font-mono">~72 h</span>
+              </div>
+              <div class="flex justify-between text-[0.8125rem]">
+                <span class="text-fg-muted">Reciprocal</span>
+                <span class="font-mono">Both opt in</span>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- =================================== FEATURES =================================== -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">What you get</p>
+          <h2 class="h1 font-semibold text-fg">Three things, done well.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
+              <path d="M3 3v18h18" />
+              <path d="M7 16V8M12 16v-5M17 16v-3" />
+            </svg>
+            <h3 class="h2 font-semibold mb-3">47-dimension compatibility.</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Operating culture, risk appetite, decision velocity, governance maturity, communication style — and 42 more. Each contributes a sub-score to the overall match, visible in every result.
+            </p>
+          </article>
+
+          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
+              <circle cx="12" cy="12" r="10" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            <h3 class="h2 font-semibold mb-3">Verified profiles only.</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Every PMI is checked against Camera di Commercio before going live. P.IVA, codice ATECO, registered office, and authorized representative — confirmed at signup, re-checked annually.
+            </p>
+          </article>
+
+          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+            <h3 class="h2 font-semibold mb-3">A list, not a feed.</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Matches are presented as a ranked, scannable list. No infinite scroll, no swipe, no streaks, no notifications competing for attention. Reciprocal contact only — both companies must opt in.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== INDUSTRIES =================================== -->
+    <section class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">Use cases</p>
+          <h2 class="h1 font-semibold text-fg">Three plausible matches across the Italian PMI landscape.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <!-- Industry: Manufacturing -->
+          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-xs font-medium text-fg-subtle font-mono">MANUFACTURING</span>
+              <span class="text-xs text-fg-subtle">Veneto → Lombardia</span>
+            </div>
+            <h3 class="h2 font-semibold mb-4">Textile manufacturer needs a logistics partner.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
+              <span class="font-medium text-fg">Tessuti Belluno SpA</span>, a third-generation textile manufacturer in Veneto, is opening a B2B catalogue and needs a logistics partner with comparable governance discipline. Matched with <span class="font-medium text-fg">Lombardia Logistica SRL</span>.
+            </p>
+            <div class="pt-5 border-t border-border flex items-center justify-between">
+              <span class="text-xs text-fg-subtle">Compatibility</span>
+              <span class="font-mono text-2xl font-medium">84<span class="text-base text-fg-subtle ml-1">/100</span></span>
+            </div>
+          </article>
+
+          <!-- Industry: Tech -->
+          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-xs font-medium text-fg-subtle font-mono">TECH SCALEUP</span>
+              <span class="text-xs text-fg-subtle">Milano → Italy</span>
+            </div>
+            <h3 class="h2 font-semibold mb-4">Software studio entering the healthcare vertical.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
+              <span class="font-medium text-fg">Aurora Digital SRL</span>, a Milano-based product team, is exploring a vertical entry into Italian healthcare. Matched with <span class="font-medium text-fg">MedicHub Italia</span> — strong alignment on risk documentation and product cadence.
+            </p>
+            <div class="pt-5 border-t border-border flex items-center justify-between">
+              <span class="text-xs text-fg-subtle">Compatibility</span>
+              <span class="font-mono text-2xl font-medium">79<span class="text-base text-fg-subtle ml-1">/100</span></span>
+            </div>
+          </article>
+
+          <!-- Industry: Services -->
+          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
+            <div class="flex items-center justify-between mb-5">
+              <span class="text-xs font-medium text-fg-subtle font-mono">SERVICES</span>
+              <span class="text-xs text-fg-subtle">Veneto → Emilia</span>
+            </div>
+            <h3 class="h2 font-semibold mb-4">Architecture studio sourcing a heritage food client.</h3>
+            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
+              <span class="font-medium text-fg">Studio Architettura Verona</span> specializes in artisanal-production facility design. Matched with <span class="font-medium text-fg">Conserve Nonna Maria SRL</span> for a Made-in-Italy production line renovation — aligned communication tempo.
+            </p>
+            <div class="pt-5 border-t border-border flex items-center justify-between">
+              <span class="text-xs text-fg-subtle">Compatibility</span>
+              <span class="font-mono text-2xl font-medium">76<span class="text-base text-fg-subtle ml-1">/100</span></span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== COMPARISON =================================== -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">Compared to alternatives</p>
+          <h2 class="h1 font-semibold text-fg">Why not LinkedIn, why not a trade event.</h2>
+        </div>
+
+        <div class="border border-border rounded-xl overflow-hidden bg-surface">
+          <div class="overflow-x-auto">
+            <table class="w-full text-[0.9375rem]">
+              <thead>
+                <tr class="border-b border-border bg-surface-alt">
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm w-[34%]">Capability</th>
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg">
+                    <div class="flex items-center gap-2">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 21V7l9-4 9 4v14" />
+                        <path d="M3 21h18" />
+                        <path d="M9 21V12h6v9" />
+                      </svg>
+                      Minerva
+                    </div>
+                  </th>
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm">LinkedIn Sales&nbsp;Navigator</th>
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm">B2B trade events</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Verified company identity</th>
+                  <td class="py-4 px-5 lg:px-6 align-top">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>Camera di Commercio</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Self-reported</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Booth presence</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cultural-fit signal</th>
+                  <td class="py-4 px-5 lg:px-6 align-top">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>47 dimensions</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-fg-subtle"><path d="M5 12h14"/></svg>None</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-fg-subtle"><path d="M5 12h14"/></svg>None</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Time to first qualified match</th>
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono">~72 h</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Weeks of outreach</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Months between events</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cost transparency</th>
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono">€0 – €39 / mo</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">€99+ / seat / mo</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">€2,000+ / event</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Signal-to-noise</th>
+                  <td class="py-4 px-5 lg:px-6 align-top">Ranked list of qualified matches</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Feed-driven discovery</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Booth-driven serendipity</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">GDPR posture</th>
+                  <td class="py-4 px-5 lg:px-6 align-top">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>EU-resident by design</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Compliant</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Organizer-dependent</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== PRICING =================================== -->
+    <section id="pricing" class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">Pricing</p>
+          <h2 class="h1 font-semibold text-fg">Two plans. No theatre.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl">
+          <!-- Free -->
+          <article class="bg-surface border border-border rounded-xl p-8 lg:p-10 flex flex-col">
+            <div class="mb-6">
+              <h3 class="text-xl font-semibold mb-2">Free</h3>
+              <p class="text-sm text-fg-muted">Profile, verification, limited matching.</p>
+            </div>
+            <div class="mb-6 pb-6 border-b border-border">
+              <div class="flex items-baseline gap-2">
+                <span class="font-mono text-[2.75rem] leading-none font-semibold tracking-tight">€0</span>
+                <span class="text-sm text-fg-muted">/ month</span>
+              </div>
+            </div>
+            <ul class="space-y-3 mb-8 flex-1">
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Verified company profile</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Up to 10 match reviews per month</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Basic compatibility breakdown</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Camera di Commercio verification</span>
+              </li>
+            </ul>
+            <a href="#cta" class="inline-flex items-center justify-center h-11 px-5 rounded-md border border-border-strong text-fg text-sm font-medium hover:bg-surface-alt transition-colors duration-150">
+              Start free
+            </a>
+          </article>
+
+          <!-- Premium -->
+          <article class="bg-surface border-2 border-primary rounded-xl p-8 lg:p-10 flex flex-col relative">
+            <span class="absolute -top-3 left-8 inline-flex items-center px-2.5 py-1 rounded-full bg-primary text-on-primary text-xs font-medium">Recommended</span>
+            <div class="mb-6">
+              <h3 class="text-xl font-semibold mb-2">Premium</h3>
+              <p class="text-sm text-fg-muted">Full breakdown, unlimited reviews, exports.</p>
+            </div>
+            <div class="mb-6 pb-6 border-b border-border">
+              <div class="flex items-baseline gap-2">
+                <span class="font-mono text-[2.75rem] leading-none font-semibold tracking-tight">€39</span>
+                <span class="text-sm text-fg-muted">/ month</span>
+              </div>
+              <p class="text-xs text-fg-subtle mt-2">Billed annually · €468 / year</p>
+            </div>
+            <ul class="space-y-3 mb-8 flex-1">
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Everything in Free</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Unlimited match reviews</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Full 47-dimension breakdown per match</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Saved match shortlists</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Priority verification queue</span>
+              </li>
+              <li class="flex items-start gap-2.5 text-[0.9375rem]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success shrink-0 mt-0.5"><path d="M20 6 9 17l-5-5"/></svg>
+                <span>Export match reports (PDF)</span>
+              </li>
+            </ul>
+            <a href="#cta" class="inline-flex items-center justify-center h-11 px-5 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover transition-colors duration-150">
+              Start Premium
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== TRUST DEEP-DIVE =================================== -->
+    <section id="trust" class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-2xl mb-12 lg:mb-16">
+          <p class="text-sm font-medium text-accent mb-3">Trust &amp; security</p>
+          <h2 class="h1 font-semibold text-fg">Built to be audited.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+          <article class="border-l-2 border-border pl-6 lg:pl-7 hover:border-accent transition-colors duration-150">
+            <h3 class="h2 font-semibold mb-3">Camera di Commercio verification</h3>
+            <p class="text-fg-muted leading-relaxed">
+              Every profile is checked against the Italian business registry before publication. P.IVA, codice ATECO, registered office, and the legal representative must match. Re-checked annually.
+            </p>
+          </article>
+          <article class="border-l-2 border-border pl-6 lg:pl-7 hover:border-accent transition-colors duration-150">
+            <h3 class="h2 font-semibold mb-3">GDPR by design</h3>
+            <p class="text-fg-muted leading-relaxed">
+              EU data residency. No third-party analytics or advertising trackers anywhere in the product. Subject access requests answered within thirty days. Self-service profile deletion.
+            </p>
+          </article>
+          <article class="border-l-2 border-border pl-6 lg:pl-7 hover:border-accent transition-colors duration-150">
+            <h3 class="h2 font-semibold mb-3">Methodology, in writing</h3>
+            <p class="text-fg-muted leading-relaxed">
+              The 47 dimensions, their measurement, and their weighting are documented in a public methodology paper. We publish changes to the model with version numbers.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== FAQ =================================== -->
+    <section id="faq" class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16">
+          <div class="lg:col-span-4">
+            <p class="text-sm font-medium text-accent mb-3">Frequently asked</p>
+            <h2 class="h1 font-semibold text-fg mb-4">Direct answers.</h2>
+            <p class="text-fg-muted leading-relaxed">
+              If something here doesn't cover your question, write to <a href="#cta" class="text-accent hover:text-accent-strong underline underline-offset-4">support@minerva.it</a>. Italian and English.
+            </p>
+          </div>
+
+          <div class="lg:col-span-8 divide-y divide-border border-t border-b border-border">
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">Is Minerva only for Italian companies?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                Yes. V1 is Italian-only. Companies must be registered with an Italian Camera di Commercio. International expansion is on the Phase 2 roadmap, starting with cross-border matching for Italian PMI exporting to the EU.
+              </p>
+            </details>
+
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">How is &ldquo;cultural compatibility&rdquo; different from sector matching?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                Sector matching tells you <em>what</em> a company does. Cultural compatibility tells you <em>how</em> they do it &mdash; decision tempo, risk posture, governance discipline, communication register. In our experience, the <em>how</em> predicts whether a partnership survives the second year better than the <em>what</em>.
+              </p>
+            </details>
+
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">What is verified before a profile goes live?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                P.IVA registration, codice ATECO, registered office, and confirmation that the contact person is an authorized representative of the company. Verification typically completes within twenty-four hours.
+              </p>
+            </details>
+
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">Why €39 per month?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                Premium pricing is defensible against a single trade event (€2,000+) or a Sales Navigator seat (€99+ per month), while remaining accessible to the smaller PMI we built this for. Free tier covers the core matchmaking; Premium adds depth and exports.
+              </p>
+            </details>
+
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">Is matching reciprocal?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                Yes. Both companies must indicate interest before contact details are exchanged. There is no cold outreach inside Minerva &mdash; by design. It keeps signal-to-noise high for both sides.
+              </p>
+            </details>
+
+            <details class="group py-5 lg:py-6">
+              <summary class="flex items-start justify-between gap-6 text-left">
+                <span class="font-semibold text-[1.0625rem] leading-snug">Can I delete my company profile?</span>
+                <svg class="chev shrink-0 mt-1 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </summary>
+              <p class="text-fg-muted leading-relaxed mt-3 pr-10">
+                Yes &mdash; from the account settings, in two clicks. GDPR erasure requests are honoured within thirty days. Match history and exchanged messages can be exported before deletion.
+              </p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== FINAL CTA =================================== -->
+    <section id="cta" class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="display font-semibold text-fg mb-5">Find a partner who operates like you.</h2>
+          <p class="body-lg text-fg-muted mb-9 max-w-xl mx-auto">
+            Set up your profile in twenty minutes. First qualified match typically within seventy-two hours.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
+            <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
+              Request a demo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#pricing" class="inline-flex items-center gap-1.5 h-12 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
+              View the free plan
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================================== FOOTER =================================== -->
+  <footer class="border-t border-border bg-surface-alt">
+    <div class="max-w-container mx-auto px-6 lg:px-8 py-14">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-12">
+        <div class="lg:col-span-5">
+          <a href="#top" class="inline-flex items-center gap-2.5 mb-5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-primary">
+              <path d="M3 21V7l9-4 9 4v14" />
+              <path d="M3 21h18" />
+              <path d="M9 21V12h6v9" />
+            </svg>
+            <span class="font-semibold tracking-tight text-[1.0625rem]">Minerva</span>
+          </a>
+          <p class="text-sm text-fg-muted max-w-sm leading-relaxed mb-5">
+            B2B matchmaking for Italian PMI. Cultural compatibility on 47 dimensions, verified through Camera di Commercio.
+          </p>
+          <address class="not-italic text-xs text-fg-subtle font-mono leading-relaxed">
+            Minerva SRL · P.IVA IT12345678901<br />
+            Camera di Commercio di Milano · REA MI-1234567<br />
+            Via dei Mercanti 3, 20121 Milano, IT
+          </address>
+        </div>
+
+        <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-8">
+          <div>
+            <h4 class="text-xs font-medium text-fg-subtle mb-4" style="letter-spacing: 0.04em; text-transform: uppercase;">Product</h4>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href="#how" class="text-fg-muted hover:text-fg transition-colors duration-150">How it works</a></li>
+              <li><a href="#pricing" class="text-fg-muted hover:text-fg transition-colors duration-150">Pricing</a></li>
+              <li><a href="#trust" class="text-fg-muted hover:text-fg transition-colors duration-150">Methodology</a></li>
+              <li><a href="#cta" class="text-fg-muted hover:text-fg transition-colors duration-150">Request a demo</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-medium text-fg-subtle mb-4" style="letter-spacing: 0.04em; text-transform: uppercase;">Company</h4>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">About</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Contact</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Press</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Careers</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-medium text-fg-subtle mb-4" style="letter-spacing: 0.04em; text-transform: uppercase;">Legal</h4>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Terms</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Privacy</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Cookie policy</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">GDPR contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xs font-medium text-fg-subtle mb-4" style="letter-spacing: 0.04em; text-transform: uppercase;">Resources</h4>
+            <ul class="space-y-2.5 text-sm">
+              <li><a href="#faq" class="text-fg-muted hover:text-fg transition-colors duration-150">FAQ</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Status</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Changelog</a></li>
+              <li><a href="#" class="text-fg-muted hover:text-fg transition-colors duration-150">Security</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-fg-subtle">
+        <span>© 2026 Minerva SRL. All rights reserved.</span>
+        <span class="font-mono">Built in Milano · Made in Italy</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle — respects system preference on first load, then localStorage.
+    // ?theme=light|dark in the URL forces a mode (used for deterministic screenshots).
+    (function () {
+      const root = document.documentElement;
+      const params = new URLSearchParams(window.location.search);
+      const forced = params.get('theme');
+      const stored = localStorage.getItem('minerva-theme');
+      const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (forced === 'dark') root.classList.add('dark');
+      else if (forced === 'light') root.classList.remove('dark');
+      else if (stored === 'dark' || (!stored && systemDark)) root.classList.add('dark');
+
+      const btn = document.getElementById('theme-toggle');
+      btn.addEventListener('click', function () {
+        const isDark = root.classList.toggle('dark');
+        localStorage.setItem('minerva-theme', isDark ? 'dark' : 'light');
+      });
+    })();
+
+    // FAQ: only-one-open behavior across <details>
+    (function () {
+      const detailsList = document.querySelectorAll('#faq details');
+      detailsList.forEach((d) => {
+        d.addEventListener('toggle', function () {
+          if (this.open) {
+            detailsList.forEach((other) => { if (other !== this) other.open = false; });
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
