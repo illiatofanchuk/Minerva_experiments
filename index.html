@@ -50,7 +50,7 @@
       --bg: #F8FAFC;
       --surface: #FFFFFF;
       --surface-alt: #F1F4F8;
-      --fg: #020617;
+      --fg: #2A303B;
       --fg-muted: #475569;
       --fg-subtle: #64748B;
       --primary: #0F172A;
@@ -122,6 +122,52 @@
         scroll-behavior: auto !important;
       }
     }
+
+    /* ===== NetworkHero — animated SVG composition for hero placeholder ===== */
+    .nh-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 620px;
+      margin: 0 auto;
+      --nh-ink: #1E293B;
+      --nh-muted: #64748B;
+      --nh-supplier: #10B981;
+      --nh-client: #6366F1;
+      --nh-partner: #8B5CF6;
+      --nh-service: #F59E0B;
+    }
+    @keyframes nh-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: .95; } }
+    @keyframes nh-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes nh-flow { from { stroke-dashoffset: -100; } to { stroke-dashoffset: 0; } }
+    @keyframes nh-spin { to { transform: rotate(360deg); } }
+    .nh-core { transform-box: fill-box; transform-origin: center; animation: nh-pulse 3s ease-in-out infinite; }
+    .nh-orbit { transform-box: fill-box; transform-origin: center; animation: nh-spin 60s linear infinite; }
+    .nh-sat { transform-box: fill-box; transform-origin: center; animation: nh-breathe 4s ease-in-out infinite; }
+    .nh-sat-1 { animation-delay: 0s; }
+    .nh-sat-2 { animation-delay: .5s; }
+    .nh-sat-3 { animation-delay: 1s; }
+    .nh-sat-4 { animation-delay: 1.5s; }
+    .nh-flow-dots { stroke-dasharray: 2 98; stroke-linecap: round; animation: nh-flow 4s linear infinite; }
+    .nh-flow-1 { animation-delay: 0s; }
+    .nh-flow-2 { animation-delay: 1s; }
+    .nh-flow-3 { animation-delay: 2s; }
+    .nh-flow-4 { animation-delay: 3s; }
+
+    /* ===== MatchMarquee — endless horizontal scroll under network animation ===== */
+    @keyframes mm-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .mm-track {
+      animation: mm-marquee 40s linear infinite;
+      will-change: transform;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mm-track { animation: none; }
+      .mm-viewport { overflow-x: auto; }
+      .mm-fade { display: none; }
+    }
   </style>
 </head>
 
@@ -132,11 +178,8 @@
     <div class="max-w-container mx-auto px-6 lg:px-8">
       <nav class="flex h-16 items-center justify-between">
         <a href="#top" class="flex items-center gap-2.5 -ml-1 px-1 py-1 rounded">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-primary">
-            <path d="M3 21V7l9-4 9 4v14" />
-            <path d="M3 21h18" />
-            <path d="M9 21V12h6v9" />
-          </svg>
+          <img src="assets/logo-light.svg" alt="" width="32" height="32" class="block dark:hidden" />
+          <img src="assets/logo-dark.svg" alt="" width="32" height="32" class="hidden dark:block" />
           <span class="font-semibold tracking-tight text-[1.0625rem]">Minerva</span>
         </a>
 
@@ -148,7 +191,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <button id="theme-toggle" type="button" aria-label="Toggle dark mode" class="h-10 w-10 inline-flex items-center justify-center rounded-md text-fg-muted hover:text-fg hover:bg-muted transition-colors duration-150">
+          <button id="theme-toggle" type="button" aria-label="Toggle dark mode" class="h-10 w-10 inline-flex items-center justify-center rounded-[10px] text-fg-muted hover:text-fg hover:bg-muted transition-colors duration-150">
             <svg id="icon-sun" class="hidden dark:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="4" />
               <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
@@ -157,8 +200,8 @@
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
           </button>
-          <a href="#cta" class="hidden sm:inline-flex text-sm text-fg-muted hover:text-fg px-3 h-10 items-center rounded-md transition-colors duration-150">Sign in</a>
-          <a href="#cta" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-md bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover transition-colors duration-150">
+          <a href="#cta" class="hidden sm:inline-flex text-sm text-fg-muted hover:text-fg px-3 h-10 items-center rounded-[10px] transition-colors duration-150">Sign in</a>
+          <a href="#cta" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-[10px] bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover transition-colors duration-150">
             Request a demo
           </a>
         </div>
@@ -171,18 +214,19 @@
     <!-- =================================== HERO =================================== -->
     <section class="relative overflow-hidden">
       <div class="max-w-container mx-auto px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
-        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div class="grid lg:grid-cols-[7fr_4fr] gap-12 lg:gap-10 items-center">
           <!-- Left: copy -->
-          <div class="lg:col-span-7">
+          <div>
             <p class="text-sm font-medium text-accent mb-5">For Italian PMI · Verified through Camera di Commercio</p>
             <h1 class="display font-semibold text-fg mb-6">
-              Find Italian partners who share <span class="text-fg-muted">how</span> you operate.
+              Intelligent matches.<br /><span class="text-fg-muted">Stronger partnerships.</span>
             </h1>
             <p class="body-lg text-fg-muted max-w-[36rem] mb-8">
-              Minerva matches small and medium enterprises on 47 dimensions of operating culture — beyond sector and revenue. Decision velocity, risk posture, governance maturity. The signals that decide whether a partnership survives year two.
+              MINERVA connects companies based on real compatibility across values, capabilities, and growth goals.<br />
+              Discover opportunities you wouldn't find on your own.
             </p>
             <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-10">
-              <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
+              <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
                 Request a demo
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M5 12h14M12 5l7 7-7 7" />
@@ -196,25 +240,10 @@
               </a>
             </div>
 
-            <!-- Inline trust facts -->
-            <dl class="grid grid-cols-3 gap-x-6 gap-y-2 max-w-[34rem] pt-6 border-t border-border">
-              <div>
-                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Dimensions</dt>
-                <dd class="font-mono text-lg font-medium mt-1">47</dd>
-              </div>
-              <div>
-                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Verified PMI</dt>
-                <dd class="font-mono text-lg font-medium mt-1">200+</dd>
-              </div>
-              <div>
-                <dt class="text-xs text-fg-subtle uppercase tracking-wide font-medium" style="letter-spacing: 0.04em;">Avg first match</dt>
-                <dd class="font-mono text-lg font-medium mt-1">72 h</dd>
-              </div>
-            </dl>
           </div>
 
           <!-- Right: synthetic compatibility scorecard -->
-          <div class="lg:col-span-5">
+          <div class="min-w-0">
             <div class="relative">
               <!-- Sub-card behind for depth (no shadow, no glow — just offset border) -->
               <div aria-hidden="true" class="absolute inset-0 translate-x-3 translate-y-3 rounded-xl border border-border bg-surface-alt"></div>
@@ -258,7 +287,6 @@
 
                 <!-- Dimensions list -->
                 <div class="space-y-2.5 mb-5">
-                  <!-- row -->
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
                     <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
@@ -310,6 +338,210 @@
             </div>
           </div>
         </div>
+        <!-- Endless horizontal marquee of match cards (under the network animation) -->
+        <div class="mt-12 mm-viewport relative overflow-x-hidden" style="height: 140px; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); width: 100vw;">
+          <div class="mm-track flex items-center h-full w-max [&>article]:mr-3">
+
+            <!-- ===== SET 1 (visible / semantic) ===== -->
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">GreenFuture Ltd.</h3>
+                <p class="text-sm text-fg-subtle truncate">Supplier&nbsp;·&nbsp;Bologna, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">92%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">BuildPro Solutions</h3>
+                <p class="text-sm text-fg-subtle truncate">Construction&nbsp;·&nbsp;Turin, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-blue-500 leading-none">84%</div>
+                <div class="text-xs text-blue-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="6" cy="8" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="16" r="2.2"/><path d="M7.7 9.4 10.4 14M16.5 8.7 13.3 14.4"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">TechFlow Inc.</h3>
+                <p class="text-sm text-fg-subtle truncate">Technology&nbsp;·&nbsp;Padua, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">89%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3v18"/><path d="M5 8a7 7 0 0 0 14 0"/><path d="M5 16a7 7 0 0 1 14 0"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">Aurora Digital SRL</h3>
+                <p class="text-sm text-fg-subtle truncate">Software&nbsp;·&nbsp;Milan, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">87%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 6v12M16 6v12"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">Tessuti Belluno SpA</h3>
+                <p class="text-sm text-fg-subtle truncate">Textile&nbsp;·&nbsp;Belluno, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">91%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M14 9h4l4 4v4a1 1 0 0 1-1 1h-1"/><circle cx="7.5" cy="18.5" r="2.2"/><circle cx="17.5" cy="18.5" r="2.2"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-fg truncate leading-tight">Lombardia Logistica</h3>
+                <p class="text-sm text-fg-subtle truncate">Logistics&nbsp;·&nbsp;Bergamo, Italy</p>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-blue-500 leading-none">78%</div>
+                <div class="text-xs text-blue-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <!-- ===== SET 2 (duplicate for seamless loop — aria-hidden) ===== -->
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">GreenFuture Ltd.</span>
+                <span class="block text-sm text-fg-subtle truncate">Supplier&nbsp;·&nbsp;Bologna, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">92%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">BuildPro Solutions</span>
+                <span class="block text-sm text-fg-subtle truncate">Construction&nbsp;·&nbsp;Turin, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-blue-500 leading-none">84%</div>
+                <div class="text-xs text-blue-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="6" cy="8" r="2.2"/><circle cx="18" cy="7" r="2.2"/><circle cx="12" cy="16" r="2.2"/><path d="M7.7 9.4 10.4 14M16.5 8.7 13.3 14.4"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">TechFlow Inc.</span>
+                <span class="block text-sm text-fg-subtle truncate">Technology&nbsp;·&nbsp;Padua, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">89%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 3v18"/><path d="M5 8a7 7 0 0 0 14 0"/><path d="M5 16a7 7 0 0 1 14 0"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">Aurora Digital SRL</span>
+                <span class="block text-sm text-fg-subtle truncate">Software&nbsp;·&nbsp;Milan, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">87%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 6h16M4 12h16M4 18h16"/><path d="M8 6v12M16 6v12"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">Tessuti Belluno SpA</span>
+                <span class="block text-sm text-fg-subtle truncate">Textile&nbsp;·&nbsp;Belluno, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-emerald-500 leading-none">91%</div>
+                <div class="text-xs text-emerald-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+            <article aria-hidden="true" class="flex items-center gap-4 shrink-0 rounded-2xl bg-surface border border-border p-4" style="width:360px;height:108px;">
+              <div class="shrink-0 w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M14 9h4l4 4v4a1 1 0 0 1-1 1h-1"/><circle cx="7.5" cy="18.5" r="2.2"/><circle cx="17.5" cy="18.5" r="2.2"/>
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <span class="block text-base font-semibold text-fg truncate leading-tight">Lombardia Logistica</span>
+                <span class="block text-sm text-fg-subtle truncate">Logistics&nbsp;·&nbsp;Bergamo, Italy</span>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-3xl font-semibold text-blue-500 leading-none">78%</div>
+                <div class="text-xs text-blue-500 font-normal mt-1">compatibility</div>
+              </div>
+            </article>
+
+          </div>
+
+          <!-- SIDE FADES -->
+          <div class="mm-fade pointer-events-none absolute inset-y-0 left-0 w-20 z-10" style="background: linear-gradient(to right, var(--bg), transparent);"></div>
+          <div class="mm-fade pointer-events-none absolute inset-y-0 right-0 w-20 z-10" style="background: linear-gradient(to left, var(--bg), transparent);"></div>
+        </div>
       </div>
     </section>
 
@@ -342,6 +574,92 @@
             <div class="text-[0.9375rem] font-medium text-fg mt-4">Companies matched within the first two weeks</div>
             <div class="text-xs text-fg-subtle mt-1.5">With a complete, verified profile</div>
           </div>
+        </div>
+        <!-- Network animation under the stats numbers -->
+        <div class="mt-16 lg:mt-20 flex justify-center">
+        <svg class="nh-svg" viewBox="0 0 530 472" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="nh-coreFill-stats" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1E293B" />
+              <stop offset="100%" stop-color="#334155" />
+            </linearGradient>
+          </defs>
+
+          <!-- decorative outer orbit ring -->
+          <g class="nh-orbit">
+            <circle cx="245" cy="236" r="150" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="3 7" opacity="0.7" />
+          </g>
+
+          <!-- connectors: faint guide + animated flowing dots -->
+          <g stroke-linecap="round">
+            <path d="M245 236 C 228 175, 185 130, 130 110" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.6" />
+            <path d="M245 236 C 228 175, 185 130, 130 110" class="nh-flow-dots nh-flow-1" stroke="var(--nh-supplier)" stroke-width="3" pathLength="100" />
+
+            <path d="M245 236 C 262 175, 305 130, 360 110" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.6" />
+            <path d="M245 236 C 262 175, 305 130, 360 110" class="nh-flow-dots nh-flow-2" stroke="var(--nh-client)" stroke-width="3" pathLength="100" />
+
+            <path d="M245 236 C 228 297, 185 342, 130 362" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.6" />
+            <path d="M245 236 C 228 297, 185 342, 130 362" class="nh-flow-dots nh-flow-3" stroke="var(--nh-partner)" stroke-width="3" pathLength="100" />
+
+            <path d="M245 236 C 262 297, 305 342, 360 362" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.6" />
+            <path d="M245 236 C 262 297, 305 342, 360 362" class="nh-flow-dots nh-flow-4" stroke="var(--nh-service)" stroke-width="3" pathLength="100" />
+          </g>
+
+          <!-- Suppliers (top-left) -->
+          <g class="nh-sat nh-sat-1">
+            <circle cx="130" cy="110" r="24" fill="#ECFDF5" />
+            <g stroke="var(--nh-supplier)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none">
+              <path d="M122 104 L130 100 L138 104 L130 108 Z" />
+              <path d="M122 104 V116 L130 120 V108" />
+              <path d="M138 104 V116 L130 120" />
+            </g>
+            <text x="97" y="106" text-anchor="end" font-family="Georgia, serif" font-size="13" font-weight="600" fill="var(--nh-ink)">Suppliers</text>
+            <text x="97" y="122" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="var(--nh-muted)">23 companies</text>
+          </g>
+
+          <!-- Clients (top-right) -->
+          <g class="nh-sat nh-sat-2">
+            <circle cx="360" cy="110" r="24" fill="#EEF2FF" />
+            <g stroke="var(--nh-client)" stroke-width="1.8" stroke-linecap="round" fill="none">
+              <circle cx="355" cy="105" r="3" />
+              <circle cx="365" cy="105" r="3" />
+              <path d="M350 116 c0-3 2.5-5 5-5 s5 2 5 5" />
+              <path d="M360 116 c0-3 2.5-5 5-5 s5 2 5 5" />
+            </g>
+            <text x="394" y="106" text-anchor="start" font-family="Georgia, serif" font-size="13" font-weight="600" fill="var(--nh-ink)">Clients</text>
+            <text x="394" y="122" text-anchor="start" font-family="system-ui, sans-serif" font-size="11" fill="var(--nh-muted)">18 companies</text>
+          </g>
+
+          <!-- Partners (bottom-left) -->
+          <g class="nh-sat nh-sat-3">
+            <circle cx="130" cy="362" r="24" fill="#F5F3FF" />
+            <g stroke="var(--nh-partner)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path d="M121 360 l5 4 4-3 5 3" />
+              <path d="M121 360 l-2 4" />
+              <path d="M139 361 l2 3" />
+            </g>
+            <text x="97" y="358" text-anchor="end" font-family="Georgia, serif" font-size="13" font-weight="600" fill="var(--nh-ink)">Partners</text>
+            <text x="97" y="374" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" fill="var(--nh-muted)">15 companies</text>
+          </g>
+
+          <!-- Service providers (bottom-right) -->
+          <g class="nh-sat nh-sat-4">
+            <circle cx="360" cy="362" r="24" fill="#FFFBEB" />
+            <g stroke="var(--nh-service)" stroke-width="1.8" stroke-linejoin="round" fill="none">
+              <circle cx="360" cy="362" r="4" />
+              <path d="M360 354 v-3 M360 373 v-3 M352 362 h-3 M371 362 h-3 M354.5 356.5 l-2-2 M365.5 367.5 l2 2 M365.5 356.5 l2-2 M354.5 367.5 l-2 2" />
+            </g>
+            <text x="394" y="358" text-anchor="start" font-family="Georgia, serif" font-size="13" font-weight="600" fill="var(--nh-ink)">Service providers</text>
+            <text x="394" y="374" text-anchor="start" font-family="system-ui, sans-serif" font-size="11" fill="var(--nh-muted)">27 companies</text>
+          </g>
+
+          <!-- Central node -->
+          <g class="nh-core">
+            <rect x="201" y="192" width="88" height="88" rx="23" fill="#3B82F6" opacity="0.10" />
+            <rect x="215" y="206" width="60" height="60" rx="16" fill="url(#nh-coreFill-stats)" />
+            <text x="245" y="236" text-anchor="middle" dominant-baseline="central" font-family="Georgia, serif" font-size="30" font-weight="700" fill="#FFFFFF">M</text>
+          </g>
+        </svg>
         </div>
       </div>
     </section>
@@ -473,7 +791,7 @@
                   <div class="text-xs text-fg-subtle mt-0.5">Textile · Belluno</div>
                 </div>
               </div>
-              <span class="px-2.5 py-1 rounded-md bg-primary text-on-primary text-xs font-bold whitespace-nowrap">92% match</span>
+              <span class="px-2.5 py-1 rounded-[10px] bg-primary text-on-primary text-xs font-bold whitespace-nowrap">92% match</span>
             </div>
             <div class="border-t border-border mb-5"></div>
             <p class="text-[0.6875rem] font-semibold text-fg-subtle uppercase mb-4" style="letter-spacing: 0.08em;">Compatibility analysis</p>
@@ -1146,7 +1464,7 @@
           <p class="text-fg-muted text-center max-w-xl">
             Join the Italian PMI that are building partnerships of value.
           </p>
-          <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md border border-border-strong bg-surface text-[0.9375rem] font-medium text-fg hover:bg-surface-alt transition-colors duration-150">
+          <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] border border-border-strong bg-surface text-[0.9375rem] font-medium text-fg hover:bg-surface-alt transition-colors duration-150">
             Create your profile for free
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7" />
@@ -1177,7 +1495,7 @@
               <span class="font-mono text-[3rem] leading-none font-bold text-fg tracking-tight">€0</span>
               <span class="text-sm text-fg-muted">/ month</span>
             </div>
-            <a href="#cta" class="inline-flex items-center justify-center h-12 px-5 rounded-md border border-border-strong bg-surface text-fg text-[0.9375rem] font-medium hover:bg-surface-alt transition-colors duration-150 mb-6">
+            <a href="#cta" class="inline-flex items-center justify-center h-12 px-5 rounded-[10px] border border-border-strong bg-surface text-fg text-[0.9375rem] font-medium hover:bg-surface-alt transition-colors duration-150 mb-6">
               Start free
             </a>
             <div class="border-t border-border pt-6 flex-1">
@@ -1218,7 +1536,7 @@
               </div>
               <p class="text-xs text-fg-subtle mt-2">Billed annually · €468/year</p>
             </div>
-            <a href="#cta" class="inline-flex items-center justify-center h-12 px-5 rounded-md bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150 mb-6">
+            <a href="#cta" class="inline-flex items-center justify-center h-12 px-5 rounded-[10px] bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150 mb-6">
               Upgrade to Premium
             </a>
             <div class="border-t border-border pt-6 flex-1">
@@ -1458,7 +1776,7 @@
           <p class="text-base font-semibold text-fg mb-1">Didn't find your answer?</p>
           <p class="text-sm text-fg-muted mb-4">Our team responds within 4 business hours.</p>
           <div class="flex flex-wrap justify-center items-center gap-3">
-            <a href="mailto:supporto@minerva.it" class="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-md border border-border-strong bg-surface text-fg text-[0.9375rem] font-medium hover:bg-surface-alt transition-colors duration-150">
+            <a href="mailto:supporto@minerva.it" class="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-[10px] border border-border-strong bg-surface text-fg text-[0.9375rem] font-medium hover:bg-surface-alt transition-colors duration-150">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m2 7 10 6 10-6" />
@@ -1483,7 +1801,7 @@
             Set up your profile in twenty minutes. First qualified match typically within seventy-two hours.
           </p>
           <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
-            <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
+            <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
               Request a demo
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
