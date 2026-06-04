@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@300..800&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -168,6 +170,39 @@
       .mm-viewport { overflow-x: auto; }
       .mm-fade { display: none; }
     }
+
+    /* ===== Card-zone: 3 cards live ABOVE stats in natural 3-col grid ===== */
+    .card-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 1024px) {
+      .card-stack { grid-template-columns: repeat(3, 1fr); }
+      .card-stack > article { will-change: transform, opacity; }
+      /* z-index: client on top during morph, supplier/partner slide in from under */
+      .card-stack [data-card="client"]   { z-index: 2; position: relative; }
+      .card-stack [data-card="supplier"],
+      .card-stack [data-card="partner"]  { z-index: 1; position: relative; }
+    }
+    /* Mobile fallback: only center card visible */
+    @media (max-width: 1023px) {
+      .card-stack [data-card="supplier"],
+      .card-stack [data-card="partner"] { display: none; }
+    }
+
+    /* ===== Partner card: endless vertical scroll of industry tiles ===== */
+    @keyframes pi-marquee-y {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+    .pi-track {
+      animation: pi-marquee-y 30s linear infinite;
+      will-change: transform;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pi-track { animation: none; }
+    }
   </style>
 </head>
 
@@ -212,7 +247,7 @@
   <main id="top">
 
     <!-- =================================== HERO =================================== -->
-    <section class="relative overflow-hidden">
+    <section id="hero" class="relative">
       <div class="max-w-container mx-auto px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
         <div class="grid lg:grid-cols-[7fr_4fr] gap-12 lg:gap-10 items-center">
           <!-- Left: copy -->
@@ -242,104 +277,9 @@
 
           </div>
 
-          <!-- Right: synthetic compatibility scorecard -->
-          <div class="min-w-0">
-            <div class="relative">
-              <!-- Sub-card behind for depth (no shadow, no glow — just offset border) -->
-              <div aria-hidden="true" class="absolute inset-0 translate-x-3 translate-y-3 rounded-xl border border-border bg-surface-alt"></div>
-              <div class="relative rounded-xl border border-border bg-surface p-6 lg:p-7">
-                <div class="flex items-center justify-between text-xs text-fg-subtle mb-5">
-                  <span class="inline-flex items-center gap-1.5">
-                    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
-                    Match card
-                  </span>
-                  <span class="font-mono">#MIN-04821</span>
-                </div>
-
-                <!-- Companies -->
-                <div class="space-y-3 mb-6">
-                  <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded bg-muted flex items-center justify-center text-[0.6875rem] font-mono font-medium text-fg-muted">TB</div>
-                    <div class="min-w-0">
-                      <div class="text-sm font-semibold truncate">Tessuti Belluno SpA</div>
-                      <div class="text-xs text-fg-subtle">Textile manufacturing · Veneto</div>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded bg-muted flex items-center justify-center text-[0.6875rem] font-mono font-medium text-fg-muted">AD</div>
-                    <div class="min-w-0">
-                      <div class="text-sm font-semibold truncate">Aurora Digital SRL</div>
-                      <div class="text-xs text-fg-subtle">Software studio · Milano</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Score -->
-                <div class="pt-5 mb-5 border-t border-border flex items-baseline justify-between">
-                  <div>
-                    <div class="text-xs text-fg-subtle font-medium">Compatibility score</div>
-                    <div class="text-xs text-fg-subtle mt-0.5">weighted across 47 dimensions</div>
-                  </div>
-                  <div class="font-mono text-[2.25rem] leading-none font-medium tracking-tight">
-                    87<span class="text-base text-fg-subtle ml-1">/100</span>
-                  </div>
-                </div>
-
-                <!-- Dimensions list -->
-                <div class="space-y-2.5 mb-5">
-                  <div class="flex items-center gap-3">
-                    <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
-                      <div class="h-full bg-accent" style="width: 82%"></div>
-                    </div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">82</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-[0.8125rem] flex-1 truncate">Decision velocity</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
-                      <div class="h-full bg-accent" style="width: 91%"></div>
-                    </div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">91</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-[0.8125rem] flex-1 truncate">Risk appetite</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
-                      <div class="h-full bg-accent" style="width: 74%"></div>
-                    </div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">74</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-[0.8125rem] flex-1 truncate">Governance maturity</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
-                      <div class="h-full bg-accent" style="width: 88%"></div>
-                    </div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">88</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-[0.8125rem] flex-1 truncate">Communication style</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden">
-                      <div class="h-full bg-accent" style="width: 85%"></div>
-                    </div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">85</span>
-                  </div>
-                </div>
-
-                <div class="pt-4 border-t border-border flex items-center justify-between text-xs">
-                  <span class="inline-flex items-center gap-1.5 text-fg-subtle">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="m9 12 2 2 4-4" />
-                    </svg>
-                    Verified · Camera di Commercio
-                  </span>
-                  <span class="font-mono text-fg-subtle">21 May 2026</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        <!-- Endless horizontal marquee of match cards (under the network animation) -->
-        <div class="mt-12 mm-viewport relative overflow-x-hidden" style="height: 140px; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); width: 100vw;">
+        <!-- Endless horizontal marquee of match cards (hidden — replaced by scroll-driven card stack) -->
+        <div class="mt-12 mm-viewport relative overflow-x-hidden hidden" style="height: 140px; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); width: 100vw;">
           <div class="mm-track flex items-center h-full w-max [&>article]:mr-3">
 
             <!-- ===== SET 1 (visible / semantic) ===== -->
@@ -544,9 +484,220 @@
         </div>
       </div>
     </section>
+    <!-- card-zone: 3 cards in natural 3-col layout above Stats (visually transformed into Hero at scroll=0) -->
+    <section id="card-zone" class="pt-16 pb-12 lg:pt-28 lg:pb-16">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+            <div class="card-stack">
+              <!-- ===== Card 1: Partnership opportunities (left) ===== -->
+              <article data-card="supplier" class="rounded-xl border border-border bg-surface p-6 lg:p-7 flex flex-col justify-between overflow-hidden">
+                <div>
+                  <h3 class="text-2xl lg:text-3xl font-semibold text-fg leading-tight tracking-tight">
+                    Partnership opportunities
+                  </h3>
+                  <p class="text-base text-fg-muted mt-3 leading-snug">
+                    Discover opportunities beyond your network
+                  </p>
+                </div>
+                <!-- Accent growth chart — bleeds to card edges, gradient fades into card bg -->
+                <div class="-mx-6 lg:-mx-7 -mb-6 lg:-mb-7 mt-8">
+                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="block w-full h-40 lg:h-64" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="supplier-growth" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32" />
+                        <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Filled area under curve -->
+                    <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6 L 400 120 L 0 120 Z"
+                          fill="url(#supplier-growth)" />
+                    <!-- Curve line on top -->
+                    <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6"
+                          stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                  </svg>
+                </div>
+              </article>
+
+              <!-- ===== Card 2: Client match (center, visible initially) ===== -->
+              <article data-card="client" class="rounded-xl border border-border bg-surface p-6 lg:p-7">
+                <div class="flex items-center justify-between text-xs text-fg-subtle mb-5">
+                  <span class="inline-flex items-center gap-1.5">
+                    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+                    Client match
+                  </span>
+                  <span class="font-mono">#MIN-04821</span>
+                </div>
+                <div class="space-y-3 mb-6">
+                  <div class="flex items-center gap-3">
+                    <img src="assets/icons/lavazza.svg" alt="" class="h-9 w-9 rounded shrink-0" />
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold truncate">Lavazza</div>
+                      <div class="text-xs text-fg-subtle">Coffee &amp; Beverage · Torino</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <img src="assets/icons/sacmi.svg" alt="" class="h-9 w-9 rounded shrink-0" />
+                    <div class="min-w-0">
+                      <div class="text-sm font-semibold truncate">SACMI</div>
+                      <div class="text-xs text-fg-subtle">Packaging Equipment · Imola</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pt-5 mb-5 border-t border-border flex items-baseline justify-between">
+                  <div>
+                    <div class="text-xs text-fg-subtle font-medium">Compatibility score</div>
+                    <div class="text-xs text-fg-subtle mt-0.5">weighted across 47 dimensions</div>
+                  </div>
+                  <div class="font-mono text-[2.25rem] leading-none font-medium tracking-tight">
+                    87<span class="text-base text-fg-subtle ml-1">/100</span>
+                  </div>
+                </div>
+                <div class="space-y-2.5 mb-5">
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 82%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">82</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Decision velocity</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 91%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">91</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Risk appetite</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 74%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">74</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Governance maturity</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 88%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">88</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8125rem] flex-1 truncate">Communication style</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 85%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">85</span>
+                  </div>
+                </div>
+                <div class="pt-4 border-t border-border flex items-center justify-between text-xs">
+                  <span class="inline-flex items-center gap-1.5 text-fg-subtle">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+                    Verified · Camera di Commercio
+                  </span>
+                  <span class="font-mono text-fg-subtle">21 May 2026</span>
+                </div>
+              </article>
+
+              <!-- ===== Card 3: 100+ industries (right) ===== -->
+              <article data-card="partner" class="rounded-xl border border-border bg-surface p-6 lg:p-7 flex flex-col overflow-hidden">
+                <div>
+                  <h3 class="text-2xl lg:text-3xl font-semibold text-fg leading-tight tracking-tight">
+                    100+ industries.
+                  </h3>
+                  <p class="text-base text-fg-muted mt-3 leading-snug">
+                    Unlimited collaboration opportunities.
+                  </p>
+                </div>
+                <!-- Endless vertical scroll of industry tiles -->
+                <div class="relative flex-1 mt-6">
+                  <div class="absolute inset-0 overflow-hidden">
+                  <div class="pi-track flex flex-col gap-3">
+
+                    <!-- ===== SET 1 (visible / semantic) ===== -->
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Clients</div>
+                        <div class="text-xs text-fg-muted truncate">Find new clients</div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Suppliers</div>
+                        <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Partners</div>
+                        <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Collaborators</div>
+                        <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
+                        <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
+                      </div>
+                    </div>
+
+                    <!-- ===== SET 2 (duplicate for seamless loop — aria-hidden) ===== -->
+                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Clients</div>
+                        <div class="text-xs text-fg-muted truncate">Find new clients</div>
+                      </div>
+                    </div>
+
+                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Suppliers</div>
+                        <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
+                      </div>
+                    </div>
+
+                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Partners</div>
+                        <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
+                      </div>
+                    </div>
+
+                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">Collaborators</div>
+                        <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
+                      </div>
+                    </div>
+
+                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                      <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <div class="min-w-0">
+                        <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
+                        <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <!-- Top / bottom fades (blend into card bg-surface) -->
+                  <div class="pointer-events-none absolute inset-x-0 top-0 h-10" style="background: linear-gradient(to bottom, var(--surface), transparent);"></div>
+                  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10" style="background: linear-gradient(to top, var(--surface), transparent);"></div>
+                  </div>
+                </div>
+              </article>
+            </div>
+      </div>
+    </section>
+
 
     <!-- =================================== STATS =================================== -->
-    <section aria-labelledby="stats" class="py-20 lg:py-28">
+    <section id="stats-section" aria-labelledby="stats" class="py-20 lg:py-28">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="max-w-2xl mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">Minerva by the numbers</p>
@@ -1915,6 +2066,115 @@
             detailsList.forEach((other) => { if (other !== this) other.open = false; });
           }
         });
+      });
+    })();
+
+    // ===== Scroll-driven card morph (card-zone → Hero look at scroll=0, natural at scroll=card-zone) =====
+    // Cards live naturally in 3-col grid above Stats. At scroll=0, GSAP transforms them
+    // to LOOK like a single Hero scorecard in Hero right col. As user scrolls past Hero,
+    // transforms reduce gradually until cards are in their natural 3-col position.
+    // Reverses smoothly on scroll-up. Active only at lg+ (≥1024px).
+    (function () {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.matchMedia().add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const client   = document.querySelector('[data-card="client"]');
+        const supplier = document.querySelector('[data-card="supplier"]');
+        const partner  = document.querySelector('[data-card="partner"]');
+        const cardZone = document.querySelector('#card-zone');
+        const heroInner = document.querySelector('#hero > div');
+        if (!client || !supplier || !partner || !cardZone || !heroInner) return;
+
+        // offsetLeft/offsetTop walk — gives natural page coords ignoring any transforms.
+        const getNaturalRect = (el) => {
+          let x = 0, y = 0;
+          let current = el;
+          while (current) {
+            x += current.offsetLeft || 0;
+            y += current.offsetTop || 0;
+            current = current.offsetParent;
+          }
+          return {
+            left: x - window.scrollX,
+            top: y - window.scrollY,
+            width: el.offsetWidth,
+            height: el.offsetHeight,
+          };
+        };
+
+        // Recompute "appear in Hero right col" transforms — called on init and refresh.
+        const computeInitial = () => {
+          const heroRect = heroInner.getBoundingClientRect();
+          const clientNat = getNaturalRect(client);
+          const supplierNat = getNaturalRect(supplier);
+          const partnerNat = getNaturalRect(partner);
+
+          const padding = 32;       // lg:px-8
+          const gridGap = 40;       // lg:gap-10
+          const heroPtLg = 96;      // lg:pt-24
+          const heroPbLg = 112;     // lg:pb-28
+          const innerWidth = heroRect.width - 2 * padding;
+          const oneFr = (innerWidth - gridGap) / 11;
+          const leftColW = oneFr * 7;
+          const rightColW = oneFr * 4;
+          const heroTargetX = heroRect.left + padding + leftColW + gridGap + rightColW / 2;
+          const heroTargetY = heroRect.top + heroPtLg + (heroRect.height - heroPtLg - heroPbLg) / 2;
+          const cardScale = rightColW / clientNat.width;
+
+          const dx = (rect) => heroTargetX - (rect.left + rect.width / 2);
+          const dy = (rect) => heroTargetY - (rect.top + rect.height / 2);
+
+          return {
+            client:   { x: dx(clientNat),   y: dy(clientNat),   scale: cardScale },
+            supplier: { x: dx(supplierNat), y: dy(supplierNat), scale: cardScale },
+            partner:  { x: dx(partnerNat),  y: dy(partnerNat),  scale: cardScale },
+          };
+        };
+
+        let t = computeInitial();
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            endTrigger: '#card-zone',
+            end: 'top top',           // animation completes when card-zone top reaches viewport top
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+            onRefresh: () => { t = computeInitial(); },
+          },
+        });
+
+        // Cards animate FROM (transformed-to-Hero) TO (natural identity)
+        tl.from(client, {
+          x: () => t.client.x,
+          y: () => t.client.y,
+          scale: () => t.client.scale,
+          ease: 'none',
+          immediateRender: true,
+        }, 0);
+        tl.from(supplier, {
+          x: () => t.supplier.x,
+          y: () => t.supplier.y,
+          scale: () => t.supplier.scale,
+          opacity: 0,
+          ease: 'none',
+          immediateRender: true,
+        }, 0);
+        tl.from(partner, {
+          x: () => t.partner.x,
+          y: () => t.partner.y,
+          scale: () => t.partner.scale,
+          opacity: 0,
+          ease: 'none',
+          immediateRender: true,
+        }, 0);
+
+        // matchMedia cleanup — runs when breakpoint exits
+        return () => {
+          gsap.set([client, supplier, partner], { clearProps: 'all' });
+        };
       });
     })();
   </script>
