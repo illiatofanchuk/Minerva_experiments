@@ -175,7 +175,7 @@
     .card-stack {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 19px;
     }
     @media (min-width: 1024px) {
       .card-stack { grid-template-columns: repeat(3, 1fr); }
@@ -189,6 +189,56 @@
     @media (max-width: 1023px) {
       .card-stack [data-card="supplier"],
       .card-stack [data-card="partner"] { display: none; }
+    }
+
+    /* ===== Supplier card: horizontal chips marquee ===== */
+    .chip-track {
+      animation: mm-marquee 18s linear infinite;
+      will-change: transform;
+    }
+
+    /* ===== Supplier card: chart growth animation (clip-path reveal, React-style) ===== */
+    .supplier-chart .chart-content {
+      clip-path: inset(0 100% 0 0);
+      -webkit-clip-path: inset(0 100% 0 0);
+      transition: clip-path 1.8s cubic-bezier(0.85, 0, 0.15, 1),
+              -webkit-clip-path 1.8s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    .supplier-chart.animate .chart-content {
+      clip-path: inset(0);
+      -webkit-clip-path: inset(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .supplier-chart .chart-content {
+        clip-path: none;
+        -webkit-clip-path: none;
+      }
+    }
+
+    /* ===== Client card: slot-machine number reels ===== */
+    .slot-machine {
+      display: inline-flex;
+      line-height: 1;
+      vertical-align: baseline;
+    }
+    .slot-machine .slot {
+      display: inline-block;
+      overflow: hidden;
+      height: 1em;
+      line-height: 1;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+              mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    }
+    .slot-machine .slot-reel {
+      display: flex;
+      flex-direction: column;
+      transform: translateY(0);
+      will-change: transform;
+    }
+    .slot-machine .slot-digit {
+      height: 1em;
+      line-height: 1;
+      display: block;
     }
 
     /* ===== Partner card: endless vertical scroll of industry tiles ===== */
@@ -492,27 +542,58 @@
               <article data-card="supplier" class="rounded-xl border border-border bg-surface p-6 lg:p-7 flex flex-col justify-between overflow-hidden">
                 <div>
                   <h3 class="text-2xl lg:text-3xl font-semibold text-fg leading-tight tracking-tight">
-                    Partnership opportunities
+                    Growing every day
                   </h3>
                   <p class="text-base text-fg-muted mt-3 leading-snug">
-                    Discover opportunities beyond your network
+                    More companies. More opportunities. Better matches.
                   </p>
+                </div>
+                <!-- Industry chips: endless horizontal scroll with side fades -->
+                <div class="-mx-6 lg:-mx-7 mt-6 relative overflow-hidden">
+                  <div class="chip-track flex items-center gap-2 w-max">
+                    <!-- SET 1 -->
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Insurance</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Banking</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">IT</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Automotive</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Electronics</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Chemical</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">HORECA</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Consulting</span>
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Logistics</span>
+                    <!-- SET 2 (duplicate for seamless loop) -->
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Insurance</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Banking</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">IT</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Automotive</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Electronics</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Chemical</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">HORECA</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Consulting</span>
+                    <span aria-hidden="true" class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Logistics</span>
+                  </div>
+                  <!-- Side fades (blend into card bg-surface) -->
+                  <div class="pointer-events-none absolute inset-y-0 left-0 w-10 z-10" style="background: linear-gradient(to right, var(--surface), transparent);"></div>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 w-10 z-10" style="background: linear-gradient(to left, var(--surface), transparent);"></div>
                 </div>
                 <!-- Accent growth chart — bleeds to card edges, gradient fades into card bg -->
                 <div class="-mx-6 lg:-mx-7 -mb-6 lg:-mb-7 mt-8">
-                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="block w-full h-40 lg:h-64" aria-hidden="true">
+                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="supplier-chart block w-full h-40 lg:h-64" aria-hidden="true">
                     <defs>
                       <linearGradient id="supplier-growth" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32" />
                         <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
                       </linearGradient>
                     </defs>
-                    <!-- Filled area under curve -->
-                    <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6 L 400 120 L 0 120 Z"
-                          fill="url(#supplier-growth)" />
-                    <!-- Curve line on top -->
-                    <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6"
-                          stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                    <!-- Wrapped in <g class="chart-content"> for unified clip-path reveal -->
+                    <g class="chart-content">
+                      <!-- Filled area under curve -->
+                      <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6 L 400 120 L 0 120 Z"
+                            fill="url(#supplier-growth)" />
+                      <!-- Curve line on top -->
+                      <path d="M 0 96 C 60 92, 120 80, 180 60 C 240 42, 300 22, 400 6"
+                            stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                    </g>
                   </svg>
                 </div>
               </article>
@@ -542,40 +623,39 @@
                     </div>
                   </div>
                 </div>
-                <div class="pt-5 mb-5 border-t border-border flex items-baseline justify-between">
-                  <div>
-                    <div class="text-xs text-fg-subtle font-medium">Compatibility score</div>
-                    <div class="text-xs text-fg-subtle mt-0.5">weighted across 47 dimensions</div>
+                <div class="pt-5 mb-5 border-t border-border flex items-center justify-between">
+                  <div class="text-[0.8125rem] leading-tight">
+                    Compatibility<br>score
                   </div>
                   <div class="font-mono text-[2.25rem] leading-none font-medium tracking-tight">
-                    87<span class="text-base text-fg-subtle ml-1">/100</span>
+                    <span data-count-to="87">87</span><span class="text-base text-fg-subtle ml-1">/100</span>
                   </div>
                 </div>
                 <div class="space-y-2.5 mb-5">
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 82%"></div></div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">82</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="82" style="width: 82%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="82">82</span>
                   </div>
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Decision velocity</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 91%"></div></div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">91</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="91" style="width: 91%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="91">91</span>
                   </div>
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Risk appetite</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 74%"></div></div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">74</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="74" style="width: 74%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="74">74</span>
                   </div>
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Governance maturity</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 88%"></div></div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">88</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="88" style="width: 88%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="88">88</span>
                   </div>
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Communication style</span>
-                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" style="width: 85%"></div></div>
-                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted">85</span>
+                    <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="85" style="width: 85%"></div></div>
+                    <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="85">85</span>
                   </div>
                 </div>
                 <div class="pt-4 border-t border-border flex items-center justify-between text-xs">
@@ -603,7 +683,7 @@
                   <div class="pi-track flex flex-col gap-3">
 
                     <!-- ===== SET 1 (visible / semantic) ===== -->
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Clients</div>
@@ -611,7 +691,7 @@
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Suppliers</div>
@@ -619,7 +699,7 @@
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Partners</div>
@@ -627,7 +707,7 @@
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Collaborators</div>
@@ -635,7 +715,7 @@
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
@@ -644,7 +724,7 @@
                     </div>
 
                     <!-- ===== SET 2 (duplicate for seamless loop — aria-hidden) ===== -->
-                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Clients</div>
@@ -652,7 +732,7 @@
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Suppliers</div>
@@ -660,7 +740,7 @@
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Partners</div>
@@ -668,7 +748,7 @@
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Collaborators</div>
@@ -676,7 +756,7 @@
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-3 rounded-lg bg-surface-alt">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
                       <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
@@ -706,22 +786,22 @@
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div>
-            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight">200+</div>
+            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight"><span data-count-to="200">200</span>+</div>
             <div class="text-[0.9375rem] font-medium text-fg mt-4">Verified Italian companies</div>
             <div class="text-xs text-fg-subtle mt-1.5">Validated through Camera di Commercio</div>
           </div>
           <div>
-            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight">47</div>
+            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight"><span data-count-to="47">47</span></div>
             <div class="text-[0.9375rem] font-medium text-fg mt-4">Compatibility dimensions</div>
             <div class="text-xs text-fg-subtle mt-1.5">Analysed by the Minerva algorithm</div>
           </div>
           <div>
-            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight">72h</div>
+            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight"><span data-count-to="72">72</span>h</div>
             <div class="text-[0.9375rem] font-medium text-fg mt-4">Average time to first match</div>
             <div class="text-xs text-fg-subtle mt-1.5">From completed profile</div>
           </div>
           <div>
-            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight">92%</div>
+            <div class="font-mono text-4xl lg:text-[3.5rem] font-medium text-fg leading-none tracking-tight"><span data-count-to="92">92</span>%</div>
             <div class="text-[0.9375rem] font-medium text-fg mt-4">Companies matched within the first two weeks</div>
             <div class="text-xs text-fg-subtle mt-1.5">With a complete, verified profile</div>
           </div>
@@ -2171,11 +2251,124 @@
           immediateRender: true,
         }, 0);
 
+        // ===== Supplier chart growth animation =====
+        // Triggers near the end of the card-morph (when card-zone approaches viewport top).
+        // Stroke-line draws via dashoffset, filled area expands via scaleX.
+        const chart = document.querySelector('.supplier-chart');
+        if (chart) {
+          ScrollTrigger.create({
+            trigger: '#card-zone',
+            start: 'top 20%',  // card-zone top at 20% from viewport top = ~85% morph progress
+            once: true,
+            onEnter: () => chart.classList.add('animate'),
+          });
+        }
+
         // matchMedia cleanup — runs when breakpoint exits
         return () => {
           gsap.set([client, supplier, partner], { clearProps: 'all' });
+          if (chart) chart.classList.remove('animate');
         };
       });
+    })();
+
+    // ===== Slot-machine number reels (Client card + Stats section) =====
+    // Each digit becomes a vertical reel containing 0-9 (×N cycles) ending at target.
+    // Cascade timing: leftmost digit settles first, rightmost catches up later.
+    // Triggered once via IntersectionObserver per container.
+    // Respects prefers-reduced-motion (skips animation, shows final values).
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // Build slot-machine DOM for one number (replaces existing text).
+      function buildSlot(el, target) {
+        const text = String(target);
+        el.innerHTML = '';
+        el.classList.add('slot-machine');
+        [...text].forEach((char, charIdx) => {
+          const slot = document.createElement('span');
+          slot.className = 'slot';
+          const reel = document.createElement('span');
+          reel.className = 'slot-reel';
+          const digit = parseInt(char, 10);
+          const appendDigit = (n) => {
+            const d = document.createElement('span');
+            d.className = 'slot-digit';
+            d.textContent = n;
+            reel.appendChild(d);
+          };
+          const cycles = 1 + charIdx;
+          for (let c = 0; c < cycles; c++) {
+            for (let i = 0; i <= 9; i++) appendDigit(i);
+          }
+          for (let i = 0; i <= digit; i++) appendDigit(i);
+          slot.appendChild(reel);
+          el.appendChild(slot);
+        });
+      }
+
+      // Set up animation for a container — builds slots, returns animate function.
+      function setup(container, { animateBars = false } = {}) {
+        if (!container) return null;
+        const numbers = container.querySelectorAll('[data-count-to]');
+        const bars = animateBars ? container.querySelectorAll('[data-fill-to]') : [];
+
+        numbers.forEach((el) => buildSlot(el, parseInt(el.dataset.countTo, 10)));
+        bars.forEach((el) => { el.style.width = '0%'; });
+
+        return function animate() {
+          const slotEls = container.querySelectorAll('.slot-machine');
+          slotEls.forEach((el, elIdx) => {
+            const reels = el.querySelectorAll('.slot-reel');
+            reels.forEach((reel, reelIdx) => {
+              const totalDigits = reel.children.length;
+              const finalIndex = totalDigits - 1;
+              const baseDuration = 1000;
+              const perReelDelay = 500;
+              const perElementOffset = 60;
+              const duration = baseDuration + reelIdx * perReelDelay + elIdx * perElementOffset;
+              reel.style.transition = 'none';
+              reel.style.transform = 'translateY(0)';
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  reel.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+                  reel.style.transform = `translateY(-${finalIndex}em)`;
+                });
+              });
+            });
+          });
+          bars.forEach((el) => {
+            el.style.transition = 'width 1.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                el.style.width = el.dataset.fillTo + '%';
+              });
+            });
+          });
+        };
+      }
+
+      // Attach IntersectionObserver to a container with its animate function.
+      function observe(container, animate, threshold = 0.3) {
+        if (!container || !animate) return;
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              animate();
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold });
+        observer.observe(container);
+      }
+
+      // Client card (numbers + progress bars)
+      const clientCard = document.querySelector('[data-card="client"]');
+      observe(clientCard, setup(clientCard, { animateBars: true }));
+
+      // Stats section (numbers only)
+      const statsSection = document.getElementById('stats-section');
+      observe(statsSection, setup(statsSection, { animateBars: false }));
     })();
   </script>
 </body>
