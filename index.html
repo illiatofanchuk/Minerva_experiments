@@ -323,6 +323,82 @@
       max-width: 220px;
     }
 
+    /* ===== Verification cards (slide 2 visual) ===== */
+    /* Same frosted-glass treatment as the counter digits on slide 1, so both
+       sides share a visual language. Three horizontal rows stacked vertically. */
+    .sf-vcards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: min(340px, 90%);
+      transform: scale(1.15);
+      transform-origin: center center;
+    }
+    .sf-vcard {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .sf-vcard-icon {
+      flex: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .sf-vcard-info { min-width: 0; flex: 1; }
+    .sf-vcard-title {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .sf-vcard-subtitle {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.35;
+      margin-top: 3px;
+    }
+
+    /* ===== Glass Reputation card (slide 3 visual) ===== */
+    .sf-rcard {
+      width: min(420px, 92%);
+      aspect-ratio: 1;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 22px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sf-rcard-review-box {
+      margin-top: 29px;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .sf-rcard-quote-icon {
+      flex: none;
+      width: 60px;
+      height: auto;
+      margin-top: 4px;
+      opacity: 0.5;
+    }
+    .sf-rcard-quote-text { flex: 1; min-width: 0; }
+
     /* ===== Glass counter inside CardStack container (synced to advance) ===== */
     .sf-counter {
       position: absolute;
@@ -1291,10 +1367,10 @@
       <div class="sf-pin">
         <div class="max-w-container mx-auto px-6 lg:px-8 py-20 lg:py-28">
 
-          <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[70vh]">
+          <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-stretch min-h-[70vh]">
 
             <!-- ===== LEFT: text slides + scroll indicator ===== -->
-            <div>
+            <div class="flex flex-col">
               <div class="sf-text-slides relative min-h-[460px] lg:min-h-[480px]">
 
                 <div class="sf-slide is-active space-y-6" data-slide="0">
@@ -1372,7 +1448,7 @@
               </div>
 
               <!-- Scroll indicator (capsule stepper) -->
-              <div class="mt-12">
+              <div class="mt-auto pt-12">
                 <div class="sf-indicator" role="tablist" aria-label="Section progress">
                   <span class="sf-seg is-active" role="tab" aria-selected="true" aria-label="Step 1 of 3" data-step="0">
                     <span class="sf-fill"></span>
@@ -1409,15 +1485,119 @@
               </div>
               <div class="sf-slide" data-slide="1">
                 <div
-                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center"
+                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center flex items-center justify-center overflow-hidden"
                   style="background-image: url('assets/images/scroll-card-bg-2.jpg');"
-                ></div>
+                >
+                  <div class="sf-vcards">
+                    <div class="sf-vcard">
+                      <div class="sf-vcard-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                      </div>
+                      <div class="sf-vcard-info">
+                        <div class="sf-vcard-title">Business Registration Verified</div>
+                        <div class="sf-vcard-subtitle">Verified on Mar 15, 2026</div>
+                      </div>
+                    </div>
+                    <div class="sf-vcard">
+                      <div class="sf-vcard-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                      </div>
+                      <div class="sf-vcard-info">
+                        <div class="sf-vcard-title">ATECO Confirmed</div>
+                        <div class="sf-vcard-subtitle">13.20.00 · Textile Manufacturing</div>
+                      </div>
+                    </div>
+                    <div class="sf-vcard">
+                      <div class="sf-vcard-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                      </div>
+                      <div class="sf-vcard-info">
+                        <div class="sf-vcard-title">Authorized Representative Identified</div>
+                        <div class="sf-vcard-subtitle">Marco Rossi · CEO & Founder</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="sf-slide" data-slide="2">
                 <div
-                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center"
+                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center flex items-center justify-center overflow-hidden p-4"
                   style="background-image: url('assets/images/scroll-card-bg-3.jpg');"
-                ></div>
+                >
+                  <div class="sf-rcard" aria-hidden="true">
+                    <!-- header -->
+                    <div class="flex items-start justify-between mb-[34px]">
+                      <div>
+                        <div class="text-4xl font-bold leading-none">Reputation</div>
+                        <div class="text-xs mt-2" style="color: rgba(255,255,255,0.65);">12 reviews from verified partners</div>
+                      </div>
+                      <div class="flex items-baseline gap-1">
+                        <span class="font-mono text-4xl font-bold leading-none" style="color: #fff;">4.6</span>
+                        <span class="text-sm" style="color: rgba(255,255,255,0.6);">/5</span>
+                      </div>
+                    </div>
+
+                    <!-- category rows -->
+                    <div class="space-y-2.5 px-[3px]">
+                      <!-- Reliability 4.8 — 5 stars -->
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm w-32 shrink-0" style="color: #fff;">Reliability</span>
+                        <div class="flex gap-0.5 flex-1">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <span class="font-mono text-sm font-semibold w-8 text-right">4.8</span>
+                      </div>
+                      <!-- Values alignment 4.7 -->
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm w-32 shrink-0" style="color: #fff;">Values alignment</span>
+                        <div class="flex gap-0.5 flex-1">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <span class="font-mono text-sm font-semibold w-8 text-right">4.7</span>
+                      </div>
+                      <!-- Communication 4.5 — 4 full + 1 half -->
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm w-32 shrink-0" style="color: #fff;">Communication</span>
+                        <div class="flex gap-0.5 flex-1">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true" style="opacity: 0.4;"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <span class="font-mono text-sm font-semibold w-8 text-right">4.5</span>
+                      </div>
+                      <!-- Follow-through 4.4 -->
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm w-32 shrink-0" style="color: #fff;">Follow-through</span>
+                        <div class="flex gap-0.5 flex-1">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD400" stroke="none" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        </div>
+                        <span class="font-mono text-sm font-semibold w-8 text-right">4.4</span>
+                      </div>
+                    </div>
+
+                    <!-- inner review (quote icon + text) -->
+                    <div class="sf-rcard-review-box">
+                      <img src="assets/icons/quote.svg" alt="" class="sf-rcard-quote-icon" />
+                      <div class="sf-rcard-quote-text">
+                        <p class="text-base font-medium" style="color: #fff;">Reliable partner, values genuinely aligned. Clear communication from the start. Recommended.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2773,6 +2953,9 @@
       // TextAnimate by="line" style) after the heading reveal. Empty for slides
       // without a <ul>.
       const slideLists = {};
+      // Per-slide Reputation glass card sub-parts (slide 3 visual). Sequenced
+      // reveal: header → categories (stagger same as slideList) → review-box.
+      const rcardParts = {};
       let firstActivate = true;
 
       function animateHeadingWords(words) {
@@ -2792,6 +2975,34 @@
         );
       }
 
+      function animateRcard(idx) {
+        const parts = rcardParts[idx];
+        if (!parts) return;
+        // 1) Header items stagger in with y-rise: "Reputation" → 4.6/5 → subtitle
+        if (parts.headerItems && parts.headerItems.length) {
+          gsap.fromTo(parts.headerItems,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12, delay: 0.25, overwrite: true }
+          );
+        }
+        // 2) category rows stagger in (same params as animateSlideList) once
+        //    header has settled
+        if (parts.categories && parts.categories.length) {
+          gsap.fromTo(parts.categories,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.18, delay: 1.2, overwrite: true }
+          );
+        }
+        // 3) review-box fades in last, after the 4 categories have settled
+        //    (1.2 + 3*0.18 + 0.7 ≈ 2.44s → start review at 2.5s)
+        if (parts.review) {
+          gsap.fromTo(parts.review,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.7, ease: 'power2.out', delay: 2.5, overwrite: true }
+          );
+        }
+      }
+
       // Discrete: which slide is visible + which seg classes (is-active / is-done).
       const setActiveSlide = (idx) => {
         slides.forEach((s) => {
@@ -2809,6 +3020,7 @@
         if (!firstActivate) {
           if (headingWords[idx]) animateHeadingWords(headingWords[idx]);
           animateSlideList(idx);
+          animateRcard(idx);
         }
         firstActivate = false;
       };
@@ -2853,11 +3065,32 @@
             });
             headingWords[idx] = split.words;
             gsap.set(split.words, { opacity: 0, yPercent: 100 });
-            // collect list items for this slide (if any) and hide them initially
+            // collect stagger-able items: text-side <ul li> + visual-side .sf-vcard
             const lis = Array.from(slide.querySelectorAll('ul li'));
-            if (lis.length) {
-              slideLists[idx] = lis;
-              gsap.set(lis, { opacity: 0 });
+            const visualSlide = section.querySelector(`.sf-visual-slides [data-slide="${idx}"]`);
+            const vcards = visualSlide ? Array.from(visualSlide.querySelectorAll('.sf-vcard')) : [];
+            const items = [...lis, ...vcards];
+            if (items.length) {
+              slideLists[idx] = items;
+              gsap.set(items, { opacity: 0 });
+            }
+            // Reputation glass card on visual side (slide 3): break header into
+            // its 3 atoms (Reputation word / score block / subtitle) so they can
+            // stagger with y-rise; categories + review-box stay as before.
+            const rcard = visualSlide ? visualSlide.querySelector('.sf-rcard') : null;
+            if (rcard) {
+              const headerEl = rcard.children[0];
+              const headerLeft = headerEl ? headerEl.children[0] : null;     // "Reputation" + subtitle column
+              const headerRight = headerEl ? headerEl.children[1] : null;    // "4.6 /5" column
+              const reputationWord = headerLeft ? headerLeft.children[0] : null;
+              const subtitle = headerLeft ? headerLeft.children[1] : null;
+              const headerItems = [reputationWord, headerRight, subtitle].filter(Boolean);
+              const catContainer = rcard.children[1];
+              const categories = catContainer ? Array.from(catContainer.children) : [];
+              const review = rcard.querySelector('.sf-rcard-review-box');
+              rcardParts[idx] = { headerItems, categories, review };
+              const all = [...headerItems, ...categories, review].filter(Boolean);
+              if (all.length) gsap.set(all, { opacity: 0 });
             }
           });
           // slide-0 animates when the section first enters the viewport (h2 may
