@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Stack — auto rotation preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #DCE6F5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    color: #1a2a33;
+    user-select: none;
+  }
+
+  /* Scene */
+  .scene {
+    position: relative;
+    width: 311px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stack {
+    position: relative;
+    width: 311px;
+    height: 82.61px;
+  }
+
+  /* Card (Frame 289) */
+  .card {
+    position: absolute;
+    top: 0; left: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10.3379px 0;
+    gap: 8.61px;
+    width: 311px;
+    height: 82.61px;
+    background: #FAFAFA;
+    border: 0.861496px solid #FEFEFE;
+    border-radius: 10.3379px;
+    box-shadow:
+      0px -8px 12.3px -10px rgba(0,0,0,0.06),
+      0px -1.72299px 3.44598px rgba(255,255,255,0.15),
+      0px 1.72299px 3.44598px rgba(0,34,46,0.03);
+    backdrop-filter: blur(7.71px);
+    will-change: transform, opacity, filter;
+    /* Spring-like transition for the stack (~ spring stiffness 170 / damping 26) */
+    transition: transform .6s cubic-bezier(.34,1.32,.5,1),
+                filter .6s ease,
+                opacity .45s ease;
+  }
+
+  /* exit animation: fade out + scale down to 0.8 over 0.2s (like AnimatePresence exit) */
+  .card.leaving {
+    transition: transform .2s ease,
+                opacity .2s ease;
+  }
+
+  .card-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .thumb {
+    flex: none;
+    width: 52px; height: 52px;
+    border-radius: 9px;
+    background: #D4D4D4;
+  }
+
+  .info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+  .title {
+    font-size: 17px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tags { display: flex; gap: 6px; }
+  .tag {
+    background: #fff;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #3a4b58;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <div class="stack" id="stack"></div>
+  </div>
+
+<script>
+  const data = [
+    { title: "Terrazza Ramè Experience", tags: ["Restaurant", "Mediterranean", "Italian"] },
+    { title: "Sakura Lounge & Bar",       tags: ["Bar", "Japanese", "Cocktails"] },
+    { title: "Le Petit Jardin",           tags: ["Café", "French", "Bakery"] },
+    { title: "Nordic Smokehouse",         tags: ["Grill", "Scandinavian", "BBQ"] },
+    { title: "Casa del Sol",              tags: ["Tapas", "Spanish", "Wine"] },
+  ];
+
+  // Stack configuration
+  const OFFSET = 11;        // vertical offset of each card behind, px
+  const SCALE_STEP = 0.05;  // scale-down step
+  const DIM_STEP = 0.06;    // dimming via brightness
+  const VISIBLE = 3;        // how many cards are visible in the stack
+  const INTERVAL = 3500;    // auto-advance, ms
+
+  const stack = document.getElementById('stack');
+
+  // order: order[0] is the front card
+  let order = data.map((_, i) => i);
+
+  // Build cards
+  const cardEls = data.map((item) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    const tagsHTML = item.tags.map(t => `<span class="tag">${t}</span>`).join('');
+    el.innerHTML = `
+      <div class="card-inner">
+        <div class="thumb"></div>
+        <div class="info">
+          <div class="title">${item.title}</div>
+          <div class="tags">${tagsHTML}</div>
+        </div>
+      </div>`;
+    stack.appendChild(el);
+    return el;
+  });
+
+  // Position a card according to its depth in the stack
+  function place(el, depth) {
+    if (depth >= VISIBLE) {
+      el.style.transform =
+        `translateY(${-(VISIBLE - 1) * OFFSET}px) scale(${1 - (VISIBLE - 1) * SCALE_STEP})`;
+      el.style.filter = `brightness(${1 - (VISIBLE - 1) * DIM_STEP})`;
+      el.style.opacity = '0';
+      el.style.zIndex = '0';
+      return;
+    }
+    el.style.transform =
+      `translateY(${-depth * OFFSET}px) scale(${1 - depth * SCALE_STEP})`;
+    el.style.filter = `brightness(${1 - depth * DIM_STEP})`;
+    el.style.opacity = '1';
+    el.style.zIndex = String(VISIBLE - depth);
+  }
+
+  function render() {
+    order.forEach((dataIdx, depth) => place(cardEls[dataIdx], depth));
+  }
+
+  // One auto-advance cycle: the front card disappears (fade out + scale down to 0.8),
+  // matching the AnimatePresence exit animation of the React component
+  function advance() {
+    const frontEl = cardEls[order[0]];
+
+    // exit: opacity -> 0, scale -> 0.8 over 0.2s
+    frontEl.classList.add('leaving');
+    frontEl.style.transform = 'translateY(0) scale(0.8)';
+    frontEl.style.opacity = '0';
+
+    // the rest of the stack immediately springs forward
+    order.slice(1).forEach((dataIdx, i) => place(cardEls[dataIdx], i));
+
+    setTimeout(() => {
+      // move the front card to the back of the queue
+      order = [...order.slice(1), order[0]];
+      frontEl.classList.remove('leaving');
+      // place it at the last position without animation
+      frontEl.style.transition = 'none';
+      place(frontEl, VISIBLE);
+      // restore the transition on the next frame
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => { frontEl.style.transition = ''; });
+      });
+    }, 200);
+  }
+
+  render();
+  setInterval(advance, INTERVAL);
+</script>
+
+</body>
+</html>

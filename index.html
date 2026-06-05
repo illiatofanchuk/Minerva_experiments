@@ -13,6 +13,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -239,6 +240,219 @@
       height: 1em;
       line-height: 1;
       display: block;
+    }
+
+    /* ===== Companies card-stack (ported from handoff preview) ===== */
+    .cs-scene {
+      position: relative;
+      width: 311px;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: scale(1.2);
+      transform-origin: center center;
+    }
+    .cs-stack {
+      position: relative;
+      width: 311px;
+      height: 82.61px;
+    }
+    .cs-card {
+      position: absolute;
+      top: 0; left: 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 10.3379px 0;
+      gap: 8.61px;
+      width: 311px;
+      height: 82.61px;
+      background: #FAFAFA;
+      border: 0.861496px solid #FEFEFE;
+      border-radius: 10.3379px;
+      box-shadow:
+        0px -8px 12.3px -10px rgba(0,0,0,0.06),
+        0px -1.72299px 3.44598px rgba(255,255,255,0.15),
+        0px 1.72299px 3.44598px rgba(0,34,46,0.03);
+      backdrop-filter: blur(7.71px);
+      will-change: transform, opacity, filter;
+      transition: transform .6s cubic-bezier(.34,1.32,.5,1),
+                  filter .6s ease,
+                  opacity .45s ease;
+    }
+    .cs-card.cs-leaving {
+      transition: transform .2s ease,
+                  opacity .2s ease;
+    }
+    .cs-card-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 14px;
+      width: 100%;
+      pointer-events: none;
+    }
+    .cs-thumb {
+      flex: none;
+      width: 52px;
+      height: 52px;
+      border-radius: 9px;
+      object-fit: cover;
+      background: #D4D4D4;       /* fallback before SVG loads */
+      display: block;
+    }
+    .cs-info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .cs-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a2a33;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+    .cs-subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    /* ===== Glass counter inside CardStack container (synced to advance) ===== */
+    .sf-counter {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      pointer-events: none;
+    }
+    .sfc-digits { display: flex; gap: 8px; }
+    .sfc-digit {
+      width: 56px;
+      height: 72px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 36px;
+      font-weight: 500;
+      color: #fff;
+      line-height: 1;
+    }
+    .sfc-window {
+      height: 1em;
+      overflow: hidden;
+      line-height: 1;
+    }
+    .sfc-reel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+      transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sfc-reel > span {
+      display: block;
+      height: 1em;
+      line-height: 1;
+    }
+    .sfc-label {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+
+    /* ===== Scroll-features: pinned section with 3 fading slides ===== */
+    /* Pure cross-fade — no motion. Outgoing fades out (700ms), incoming fades in
+       (900ms with 100ms delay). Material standard easing for soft both ends.
+       Long durations + overlap = no harsh handoff, no perceptible jump. */
+    .sf-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sf-slide.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      animation: sf-slide-fade 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+    }
+    @keyframes sf-slide-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sf-slide,
+      .sf-slide.is-active {
+        animation: none;
+        transition: opacity 0.15s linear;
+      }
+    }
+    /* Scroll-stepper indicator (ported from assets/components/scroll-stepper) */
+    .sf-indicator {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: #EDEFF2;
+      border-radius: 9999px;
+      user-select: none;
+    }
+    .sf-seg {
+      position: relative;
+      height: 8px;
+      width: 8px;
+      border-radius: 9999px;
+      background: #CBD5E1;
+      overflow: hidden;
+      flex: 0 0 auto;
+      transition: width .45s cubic-bezier(.22, 1, .36, 1),
+                  background-color .35s ease;
+    }
+    .sf-seg.is-done { background: #1E293B; }
+    .sf-seg.is-active {
+      width: 48px;
+      background: #CBD5E1;
+    }
+    .sf-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: #1E293B;
+      border-radius: 9999px;
+      transition: width .08s linear;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sf-seg, .sf-fill { transition: none; }
+    }
+
+    /* ===== Partner card: industry icons recolor via mask ===== */
+    .industry-icon {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      background-color: #C9D0DD;
+      -webkit-mask: var(--icon) center / contain no-repeat;
+              mask: var(--icon) center / contain no-repeat;
     }
 
     /* ===== Partner card: endless vertical scroll of industry tiles ===== */
@@ -539,7 +753,7 @@
       <div class="max-w-container mx-auto px-6 lg:px-8">
             <div class="card-stack">
               <!-- ===== Card 1: Partnership opportunities (left) ===== -->
-              <article data-card="supplier" class="rounded-xl border border-border bg-surface p-6 lg:p-7 flex flex-col justify-between overflow-hidden">
+              <article data-card="supplier" class="rounded-xl bg-surface p-6 lg:p-7 flex flex-col justify-between overflow-hidden">
                 <div>
                   <h3 class="text-2xl lg:text-3xl font-semibold text-fg leading-tight tracking-tight">
                     Growing every day
@@ -599,7 +813,7 @@
               </article>
 
               <!-- ===== Card 2: Client match (center, visible initially) ===== -->
-              <article data-card="client" class="rounded-xl border border-border bg-surface p-6 lg:p-7">
+              <article data-card="client" class="rounded-xl bg-surface p-6 lg:p-7">
                 <div class="flex items-center justify-between text-xs text-fg-subtle mb-5">
                   <span class="inline-flex items-center gap-1.5">
                     <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
@@ -668,7 +882,7 @@
               </article>
 
               <!-- ===== Card 3: 100+ industries (right) ===== -->
-              <article data-card="partner" class="rounded-xl border border-border bg-surface p-6 lg:p-7 flex flex-col overflow-hidden">
+              <article data-card="partner" class="rounded-xl bg-surface p-6 lg:p-7 flex flex-col overflow-hidden">
                 <div>
                   <h3 class="text-2xl lg:text-3xl font-semibold text-fg leading-tight tracking-tight">
                     100+ industries.
@@ -684,7 +898,7 @@
 
                     <!-- ===== SET 1 (visible / semantic) ===== -->
                     <div class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/clients.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Clients</div>
                         <div class="text-xs text-fg-muted truncate">Find new clients</div>
@@ -692,7 +906,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/suppliers.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Suppliers</div>
                         <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
@@ -700,7 +914,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/partners.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Partners</div>
                         <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
@@ -708,7 +922,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/collaborators.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Collaborators</div>
                         <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
@@ -716,7 +930,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/ma-operation.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
                         <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
@@ -725,7 +939,7 @@
 
                     <!-- ===== SET 2 (duplicate for seamless loop — aria-hidden) ===== -->
                     <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/clients.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/clients.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Clients</div>
                         <div class="text-xs text-fg-muted truncate">Find new clients</div>
@@ -733,7 +947,7 @@
                     </div>
 
                     <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/suppliers.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/suppliers.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Suppliers</div>
                         <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
@@ -741,7 +955,7 @@
                     </div>
 
                     <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/partners.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/partners.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Partners</div>
                         <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
@@ -749,7 +963,7 @@
                     </div>
 
                     <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/collaborators.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/collaborators.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">Collaborators</div>
                         <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
@@ -757,7 +971,7 @@
                     </div>
 
                     <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
-                      <img src="assets/icons/ma-operation.svg" alt="" width="28" height="28" class="shrink-0" />
+                      <span class="industry-icon" style="--icon: url('assets/icons/ma-operation.svg')"></span>
                       <div class="min-w-0">
                         <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
                         <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
@@ -777,7 +991,7 @@
 
 
     <!-- =================================== STATS =================================== -->
-    <section id="stats-section" aria-labelledby="stats" class="py-20 lg:py-28">
+    <section id="stats-section" aria-labelledby="stats" class="hidden py-20 lg:py-28">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="max-w-2xl mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">Minerva by the numbers</p>
@@ -895,8 +1109,110 @@
       </div>
     </section>
 
+    <!-- =================================== STATS v2 (3 cards composition) =================================== -->
+    <section id="stats-v2" aria-label="Building meaningful business connections" class="py-20 lg:py-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+
+          <!-- ===== LEFT: copy + avatars ===== -->
+          <div>
+            <!-- Eyebrow chip -->
+            <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-alt text-fg-muted text-sm">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
+                <path d="M3 3v18h18" />
+                <path d="m7 14 4-4 4 4 5-5" />
+              </svg>
+              MINERVA by the numbers
+            </span>
+
+            <h2 class="h1 font-semibold text-fg mt-6 lg:mt-8 max-w-xl">
+              Building meaningful business connections.
+            </h2>
+
+            <p class="body-lg text-fg-muted mt-5 max-w-xl">
+              MINERVA helps companies find clients, suppliers, strategic partners, and collaboration opportunities through intelligent compatibility matching.
+            </p>
+
+            <!-- Bottom: caption + avatars -->
+            <div class="mt-10 lg:mt-14 max-w-xl">
+              <p class="text-fg-muted text-[0.9375rem]">
+                <span class="font-medium text-fg">Every match is evaluated</span> across 47 business dimensions and verified through trusted company data.
+              </p>
+
+              <div class="flex items-center gap-4 mt-6">
+                <div class="flex -space-x-2">
+                  <img src="assets/portraits/portrait-1.jpg" alt="" class="w-9 h-9 rounded-full border-2 border-bg object-cover" />
+                  <img src="assets/portraits/portrait-2.jpg" alt="" class="w-9 h-9 rounded-full border-2 border-bg object-cover" />
+                  <img src="assets/portraits/portrait-3.jpg" alt="" class="w-9 h-9 rounded-full border-2 border-bg object-cover" />
+                  <img src="assets/portraits/portrait-4.jpg" alt="" class="w-9 h-9 rounded-full border-2 border-bg object-cover" />
+                </div>
+                <span class="text-fg-muted text-sm">
+                  <span class="text-fg font-medium">—</span> rated 4.8/5
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== RIGHT: stat cards ===== -->
+          <div class="space-y-4">
+            <!-- Top: 200+ horizontal hero card -->
+            <article class="bg-surface-alt rounded-3xl p-7 lg:p-9 min-h-[260px] lg:min-h-[300px] flex flex-col justify-between">
+              <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                Verified network
+              </span>
+              <div>
+                <div class="font-mono text-5xl lg:text-7xl font-medium text-fg leading-none tracking-tight">
+                  <span data-count-to="200">200</span>+
+                </div>
+                <p class="text-fg-muted text-base mt-5">Verified Italian companies</p>
+              </div>
+            </article>
+
+            <!-- Bottom row: 47 and 92% -->
+            <div class="grid grid-cols-2 gap-4">
+              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 min-h-[220px] lg:min-h-[260px] flex flex-col justify-between">
+                <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  Smart matching
+                </span>
+                <div>
+                  <div class="font-mono text-5xl lg:text-6xl font-medium text-fg leading-none tracking-tight">
+                    <span data-count-to="47">47</span>
+                  </div>
+                  <p class="text-fg-muted text-sm mt-4">Compatibility dimensions</p>
+                </div>
+              </article>
+
+              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 min-h-[220px] lg:min-h-[260px] flex flex-col justify-between">
+                <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
+                    <path d="M9 12l2 2 4-4" />
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                  Match success
+                </span>
+                <div>
+                  <div class="font-mono text-5xl lg:text-6xl font-medium text-fg leading-none tracking-tight">
+                    <span data-count-to="92">92</span>%
+                  </div>
+                  <p class="text-fg-muted text-sm mt-4">Companies matched within the first two weeks</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- =================================== TRUST STRIP =================================== -->
-    <section aria-labelledby="trust-strip" class="border-y border-border bg-surface-alt">
+    <section aria-labelledby="trust-strip" class="hidden border-y border-border bg-surface-alt">
       <h2 id="trust-strip" class="sr-only">Trust signals</h2>
       <div class="max-w-container mx-auto px-6 lg:px-8 py-8">
         <ul class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6">
@@ -944,7 +1260,7 @@
     </section>
 
     <!-- =================================== PROBLEM =================================== -->
-    <section class="py-20 lg:py-28">
+    <section class="hidden py-20 lg:py-28">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="max-w-2xl mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">The signal problem</p>
@@ -966,6 +1282,147 @@
               Three days, a booth, a lanyard. The signal you actually need — how does this company operate behind the booth banner? — isn't there. You leave with contacts and no compatibility data.
             </p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================== SCROLL FEATURES (sticky pinned with 3 slides) =================================== -->
+    <section id="scroll-features" class="relative">
+      <div class="sf-pin">
+        <div class="max-w-container mx-auto px-6 lg:px-8 py-20 lg:py-28">
+
+          <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[70vh]">
+
+            <!-- ===== LEFT: text slides + scroll indicator ===== -->
+            <div>
+              <div class="sf-text-slides relative min-h-[460px] lg:min-h-[480px]">
+
+                <div class="sf-slide is-active space-y-6" data-slide="0">
+                  <h2 class="h1 font-semibold text-fg leading-tight">
+                    Find companies that fit how you do business.
+                  </h2>
+                  <p class="body-md text-fg-muted max-w-md">
+                    MINERVA helps companies identify compatible clients, suppliers, and strategic partners by analyzing organizational characteristics, business goals, and operational alignment.
+                  </p>
+                  <p class="body-md text-fg max-w-md font-medium">
+                    Understand not only who matches — but why.
+                  </p>
+                  <ul class="space-y-3 max-w-md">
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Compatibility analysis across 47 dimensions</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Clear explanation behind every match</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Continuously refined recommendations</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="sf-slide space-y-6" data-slide="1">
+                  <h2 class="h1 font-semibold text-fg leading-tight">
+                    Verified companies. Trusted connections.
+                  </h2>
+                  <p class="body-md text-fg max-w-md font-medium">
+                    Connect with confidence, knowing you're engaging with legitimate organizations and verified decision-makers.
+                  </p>
+                  <ul class="space-y-3 max-w-md">
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Verified through official Italian business records</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>GDPR-compliant and aligned with local regulations</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Authorized company representatives identified</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="sf-slide space-y-6" data-slide="2">
+                  <h2 class="h1 font-semibold text-fg leading-tight">
+                    Reputation built on real business relationships.
+                  </h2>
+                  <p class="body-md text-fg max-w-md font-medium">
+                    Every review is tied to a verified business relationship and contributes to a transparent picture of how companies work together.
+                  </p>
+                  <ul class="space-y-3 max-w-md">
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Reputation based on completed collaborations</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Verified feedback from real business partners</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 body-md text-fg">
+                      <span class="text-accent font-semibold flex-shrink-0 leading-relaxed">✓</span>
+                      <span>Multi-dimensional evaluation beyond star ratings</span>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+
+              <!-- Scroll indicator (capsule stepper) -->
+              <div class="mt-12">
+                <div class="sf-indicator" role="tablist" aria-label="Section progress">
+                  <span class="sf-seg is-active" role="tab" aria-selected="true" aria-label="Step 1 of 3" data-step="0">
+                    <span class="sf-fill"></span>
+                  </span>
+                  <span class="sf-seg" role="tab" aria-selected="false" aria-label="Step 2 of 3" data-step="1">
+                    <span class="sf-fill"></span>
+                  </span>
+                  <span class="sf-seg" role="tab" aria-selected="false" aria-label="Step 3 of 3" data-step="2">
+                    <span class="sf-fill"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== RIGHT: visual slides (placeholders for now) ===== -->
+            <div class="sf-visual-slides relative aspect-square max-w-lg ml-auto w-full">
+              <div class="sf-slide is-active" data-slide="0">
+                <div
+                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center relative flex items-center justify-center overflow-hidden"
+                  style="background-image: url('assets/images/scroll-card-bg-1.png');"
+                >
+                  <div class="cs-scene">
+                    <div class="cs-stack" id="sfCardStack"></div>
+                  </div>
+
+                  <div class="sf-counter" id="sfCounter" aria-live="polite">
+                    <div class="sfc-digits">
+                      <div class="sfc-digit"><div class="sfc-window"><div class="sfc-reel" data-pos="0"></div></div></div>
+                      <div class="sfc-digit"><div class="sfc-window"><div class="sfc-reel" data-pos="1"></div></div></div>
+                    </div>
+                    <p class="sfc-label">Candidate for matching</p>
+                  </div>
+                </div>
+              </div>
+              <div class="sf-slide" data-slide="1">
+                <div
+                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center"
+                  style="background-image: url('assets/images/scroll-card-bg-2.jpg');"
+                ></div>
+              </div>
+              <div class="sf-slide" data-slide="2">
+                <div
+                  class="w-full h-full rounded-3xl bg-surface-alt bg-cover bg-center"
+                  style="background-image: url('assets/images/scroll-card-bg-3.jpg');"
+                ></div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </section>
@@ -2264,11 +2721,350 @@
           });
         }
 
+        // ===== Cards depth effect: zoom-out as user scrolls past card-zone =====
+        // Targets the .card-stack PARENT (not individual cards) so it doesn't conflict
+        // with the morph timeline that animates each card's own transform.
+        // Triggers right when morph completes (card-zone top hits viewport top).
+        const cardStack = document.querySelector('.card-stack');
+        if (cardStack) {
+          gsap.to(cardStack, {
+            scale: 0.85,
+            opacity: 0.5,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '#card-zone',
+              start: 'top top',     // exactly when morph completes
+              end: '+=500',         // scroll 500px for full zoom-out
+              scrub: 0.5,
+            },
+          });
+        }
+
         // matchMedia cleanup — runs when breakpoint exits
         return () => {
           gsap.set([client, supplier, partner], { clearProps: 'all' });
+          if (cardStack) gsap.set(cardStack, { clearProps: 'all' });
           if (chart) chart.classList.remove('animate');
         };
+      });
+    })();
+
+    // ===== Scroll-features: pinned section with 3 swapping slides =====
+    // Pins #scroll-features for 2x viewport scroll; splits progress into 3 thirds.
+    // Each third activates a different slide (text + visual fade-in via .is-active).
+    // Indicator fill width + counter update synchronously with active slide.
+    // Active only at lg+ (≥1024px) and respects prefers-reduced-motion.
+    (function () {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      const section = document.getElementById('scroll-features');
+      if (!section) return;
+
+      const pinEl = section.querySelector('.sf-pin');
+      const slides = section.querySelectorAll('.sf-slide');
+      const segs = section.querySelectorAll('.sf-seg');
+      if (!pinEl || !slides.length || !segs.length) return;
+
+      const STEPS = 3;
+
+      // Per-slide SplitText word arrays (filled after fonts load). Used to re-fire
+      // the heading word-rise animation each time a slide becomes active.
+      const headingWords = {};
+      // Per-slide list items — animated with line-by-line stagger fade (MagicUI
+      // TextAnimate by="line" style) after the heading reveal. Empty for slides
+      // without a <ul>.
+      const slideLists = {};
+      let firstActivate = true;
+
+      function animateHeadingWords(words) {
+        if (!words || !words.length) return;
+        gsap.fromTo(words,
+          { opacity: 0, yPercent: 100 },
+          { opacity: 1, yPercent: 0, duration: 0.9, ease: 'power3.out', stagger: 0.035, overwrite: true }
+        );
+      }
+
+      function animateSlideList(idx) {
+        const lis = slideLists[idx];
+        if (!lis || !lis.length) return;
+        gsap.fromTo(lis,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.18, delay: 0.35, overwrite: true }
+        );
+      }
+
+      // Discrete: which slide is visible + which seg classes (is-active / is-done).
+      const setActiveSlide = (idx) => {
+        slides.forEach((s) => {
+          const i = parseInt(s.dataset.slide, 10);
+          s.classList.toggle('is-active', i === idx);
+        });
+        segs.forEach((seg, i) => {
+          seg.classList.toggle('is-active', i === idx);
+          seg.classList.toggle('is-done', i < idx);
+          seg.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+        });
+        // re-fire word reveal on the newly active heading — skip the initial setup
+        // call (idx=0 on load): slide-0 has its own ScrollTrigger that waits for
+        // the section to enter the viewport before animating.
+        if (!firstActivate) {
+          if (headingWords[idx]) animateHeadingWords(headingWords[idx]);
+          animateSlideList(idx);
+        }
+        firstActivate = false;
+      };
+
+      // Continuous: capsule fill width inside each seg.
+      // Passed segs hold 100% (invisible inside dark dot, but matters on scroll-up
+      // so the new active capsule starts at ~100% and only DECREASES — not refills).
+      const setFill = (idx, fill) => {
+        segs.forEach((seg, i) => {
+          const f = seg.querySelector('.sf-fill');
+          if (!f) return;
+          const w = i === idx ? fill : (i < idx ? 1 : 0);
+          f.style.width = (w * 100).toFixed(1) + '%';
+        });
+      };
+
+      let activeIdx = 0;
+      setActiveSlide(0);
+      setFill(0, 0);
+
+      // === Slide-heading word reveal (SplitText) ===
+      // Split each text-slide h2 into words wrapped in overflow-hidden masks, hide
+      // them initially, then trigger animateHeadingWords on slide swap via
+      // setActiveSlide (slides 1, 2) or via a one-shot ScrollTrigger on section
+      // entry (slide 0).
+      if (typeof SplitText !== 'undefined'
+          && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const setupSlideHeadings = () => {
+          section.querySelectorAll('.sf-text-slides .sf-slide').forEach((slide) => {
+            const h2 = slide.querySelector('h2');
+            if (!h2) return;
+            const idx = parseInt(slide.dataset.slide, 10);
+            // Strip leading/trailing whitespace from the HTML so the source-code
+            // indent doesn't show up as a phantom space before word #1's mask.
+            const trimmed = h2.innerHTML.replace(/^\s+|\s+$/g, '');
+            if (trimmed !== h2.innerHTML) h2.innerHTML = trimmed;
+            const split = new SplitText(h2, {
+              type: 'words',
+              mask: 'words',                       // overflow-hidden wrapper per word → words rise from BELOW their own line
+              smartWrap: true,
+              wordsClass: 'split-word',
+            });
+            headingWords[idx] = split.words;
+            gsap.set(split.words, { opacity: 0, yPercent: 100 });
+            // collect list items for this slide (if any) and hide them initially
+            const lis = Array.from(slide.querySelectorAll('ul li'));
+            if (lis.length) {
+              slideLists[idx] = lis;
+              gsap.set(lis, { opacity: 0 });
+            }
+          });
+          // slide-0 animates when the section first enters the viewport (h2 may
+          // be absent — both calls are no-ops when their targets aren't present)
+          if (headingWords[0] || slideLists[0]) {
+            ScrollTrigger.create({
+              trigger: section,
+              start: 'top 85%',
+              once: true,
+              onEnter: () => {
+                if (headingWords[0]) animateHeadingWords(headingWords[0]);
+                animateSlideList(0);
+              },
+            });
+          }
+        };
+        if (document.fonts && document.fonts.status !== 'loaded') {
+          document.fonts.ready.then(setupSlideHeadings);
+        } else {
+          setupSlideHeadings();
+        }
+      }
+
+      gsap.matchMedia().add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const st = ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: '+=300%',        // 1 viewport of scroll per step (matches handoff)
+          pin: pinEl,
+          pinSpacing: true,
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const p = self.progress;
+            // map p in [0,1] onto (idx, fill) — fill is 0..1 INSIDE current step
+            const exact = p * STEPS;
+            let idx = Math.floor(exact);
+            if (idx >= STEPS) idx = STEPS - 1;
+            // last step: snap fill to 1 once we've passed full progress
+            const f = idx === STEPS - 1
+              ? Math.max(exact - idx, p >= 1 ? 1 : 0)
+              : Math.min(exact - idx, 1);
+
+            if (idx !== activeIdx) {
+              activeIdx = idx;
+              setActiveSlide(idx);
+            }
+            setFill(idx, f);
+          },
+        });
+
+        return () => {
+          st.kill();
+          activeIdx = 0;
+          setActiveSlide(0);
+          setFill(0, 0);
+        };
+      });
+    })();
+
+    // ===== Companies card-stack (auto-rotating preview inside slide 1) =====
+    // Ported 1:1 from assets/components/card-stack/card-stack-preview.html.
+    // Front card fades + scales to 0.8 over 200ms; rest spring forward.
+    // Auto-advances every 3500ms; pauses on hover; respects prefers-reduced-motion.
+    (function () {
+      const mount = document.getElementById('sfCardStack');
+      if (!mount) return;
+
+      const data = [
+        { title: 'Barilla',    subtitle: 'Food Production · Parma',          logo: 'assets/icons/barilla.svg'  },
+        { title: 'Brembo',     subtitle: 'Automotive Components · Bergamo',  logo: 'assets/icons/brembo.svg'   },
+        { title: 'Reply',      subtitle: 'Technology Consulting · Torino',   logo: 'assets/icons/reply.svg'    },
+        { title: "De'Longhi",  subtitle: 'Consumer Appliances · Treviso',    logo: 'assets/icons/delonghi.svg' },
+        { title: 'IMA Group',  subtitle: 'Packaging · Bologna',              logo: 'assets/icons/ima.svg'      },
+      ];
+
+      const OFFSET = 11;
+      const SCALE_STEP = 0.05;
+      const DIM_STEP = 0.06;
+      const VISIBLE = 3;
+      const INTERVAL = 3500;
+
+      let order = data.map((_, i) => i);
+
+      const cardEls = data.map((item) => {
+        const el = document.createElement('div');
+        el.className = 'cs-card';
+        el.innerHTML = `
+          <div class="cs-card-inner">
+            <img class="cs-thumb" src="${item.logo}" alt="" loading="eager">
+            <div class="cs-info">
+              <div class="cs-title">${item.title}</div>
+              <div class="cs-subtitle">${item.subtitle}</div>
+            </div>
+          </div>`;
+        mount.appendChild(el);
+        return el;
+      });
+
+      function place(el, depth) {
+        if (depth >= VISIBLE) {
+          el.style.transform =
+            `translateY(${-(VISIBLE - 1) * OFFSET}px) scale(${1 - (VISIBLE - 1) * SCALE_STEP})`;
+          el.style.filter = `brightness(${1 - (VISIBLE - 1) * DIM_STEP})`;
+          el.style.opacity = '0';
+          el.style.zIndex = '0';
+          return;
+        }
+        el.style.transform =
+          `translateY(${-depth * OFFSET}px) scale(${1 - depth * SCALE_STEP})`;
+        el.style.filter = `brightness(${1 - depth * DIM_STEP})`;
+        el.style.opacity = '1';
+        el.style.zIndex = String(VISIBLE - depth);
+      }
+
+      function render() {
+        order.forEach((dataIdx, depth) => place(cardEls[dataIdx], depth));
+      }
+
+      function advance() {
+        // notify subscribers (e.g. the counter) that a card just rotated
+        document.dispatchEvent(new CustomEvent('sf-card-advance'));
+
+        const frontEl = cardEls[order[0]];
+        frontEl.classList.add('cs-leaving');
+        frontEl.style.transform = 'translateY(0) scale(0.8)';
+        frontEl.style.opacity = '0';
+
+        order.slice(1).forEach((dataIdx, i) => place(cardEls[dataIdx], i));
+
+        setTimeout(() => {
+          order = [...order.slice(1), order[0]];
+          frontEl.classList.remove('cs-leaving');
+          frontEl.style.transition = 'none';
+          place(frontEl, VISIBLE);
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => { frontEl.style.transition = ''; });
+          });
+        }, 200);
+      }
+
+      render();
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      let timerId = setInterval(advance, INTERVAL);
+      mount.addEventListener('mouseenter', () => { clearInterval(timerId); timerId = null; });
+      mount.addEventListener('mouseleave', () => {
+        if (!timerId) timerId = setInterval(advance, INTERVAL);
+      });
+    })();
+
+    // ===== Glass counter (slot-machine on 'sf-card-advance' event) =====
+    // 2-digit counter under the CardStack. Each digit lives in its own reel of
+    // 0–9 + duplicate 0; reel translates -Nem to show digit N. On 9→0 wrap the
+    // reel scrolls to the duplicate 0 (position 10) then snaps back to 0 with
+    // transition disabled, so motion is always FORWARD — no reverse spin.
+    // Counter cycles modulo 100. Listens to the same advance moment as the cards.
+    (function () {
+      const counter = document.getElementById('sfCounter');
+      if (!counter) return;
+      const reels = counter.querySelectorAll('.sfc-reel');
+      if (reels.length < 2) return;
+
+      const TRANSITION_MS = 750;
+      let count = 47;
+
+      // Build 0–9 + duplicate 0 into each reel
+      reels.forEach((reel) => {
+        reel.innerHTML = '';
+        for (let i = 0; i <= 9; i++) {
+          const s = document.createElement('span');
+          s.textContent = String(i);
+          reel.appendChild(s);
+        }
+        const dup = document.createElement('span');
+        dup.textContent = '0';
+        reel.appendChild(dup);
+      });
+
+      function setReelImmediate(reel, digit) {
+        reel.style.transition = 'none';
+        reel.style.transform = `translateY(-${digit}em)`;
+        void reel.offsetWidth;                // force reflow so the next paint commits
+        requestAnimationFrame(() => { reel.style.transition = ''; });
+      }
+
+      function animateReel(reel, oldDigit, newDigit) {
+        if (oldDigit === newDigit) return;
+        if (newDigit < oldDigit) {
+          // wrap forward via duplicate 0 at position 10, then snap to true 0
+          reel.style.transform = `translateY(-10em)`;
+          setTimeout(() => setReelImmediate(reel, newDigit), TRANSITION_MS);
+        } else {
+          reel.style.transform = `translateY(-${newDigit}em)`;
+        }
+      }
+
+      // Initial state — no animation
+      let current = String(count).padStart(2, '0').split('').map(Number);
+      reels.forEach((reel, i) => setReelImmediate(reel, current[i]));
+
+      // Tick on every CardStack advance
+      document.addEventListener('sf-card-advance', () => {
+        count = (count + 1) % 100;
+        const next = String(count).padStart(2, '0').split('').map(Number);
+        reels.forEach((reel, i) => animateReel(reel, current[i], next[i]));
+        current = next;
       });
     })();
 
@@ -2362,13 +3158,164 @@
         observer.observe(container);
       }
 
-      // Client card (numbers + progress bars)
+      // Animate a SINGLE .slot-machine element (used by per-element observation
+      // for tall sections where the aggregate animate would fire too early).
+      function animateSlot(slotEl) {
+        const reels = slotEl.querySelectorAll('.slot-reel');
+        reels.forEach((reel, reelIdx) => {
+          const totalDigits = reel.children.length;
+          const finalIndex = totalDigits - 1;
+          const baseDuration = 1000;
+          const perReelDelay = 500;
+          const duration = baseDuration + reelIdx * perReelDelay;
+          reel.style.transition = 'none';
+          reel.style.transform = 'translateY(0)';
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              reel.style.transition = `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+              reel.style.transform = `translateY(-${finalIndex}em)`;
+            });
+          });
+        });
+      }
+
+      // Per-element observation: each .slot-machine fires when IT enters viewport,
+      // not when its parent container does. Critical for tall sections where the
+      // top card and bottom row sit one viewport apart.
+      function observeEach(container, threshold = 0.5) {
+        if (!container) return;
+        container.querySelectorAll('.slot-machine').forEach((slotEl) => {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                animateSlot(entry.target);
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold });
+          observer.observe(slotEl);
+        });
+      }
+
+      // Client card (numbers + progress bars) — small enough to fire as a whole
       const clientCard = document.querySelector('[data-card="client"]');
       observe(clientCard, setup(clientCard, { animateBars: true }));
 
       // Stats section (numbers only)
       const statsSection = document.getElementById('stats-section');
       observe(statsSection, setup(statsSection, { animateBars: false }));
+
+      // Stats v2 section: tall layout (200+ card on top, 47/92% row below).
+      // Build slots via setup() but discard its aggregate animate — instead
+      // observe each .slot-machine individually so the bottom-row numbers
+      // animate ONLY when THEY enter the viewport.
+      const statsV2 = document.getElementById('stats-v2');
+      if (statsV2) {
+        setup(statsV2, { animateBars: false });
+        observeEach(statsV2, 0.5);
+      }
+    })();
+
+    // ===== Heading SplitText: per-word reveal on section entry =====
+    // Vanilla port of the React-Bits SplitText pattern. Splits each marked heading
+    // into <div class="split-word">, then animates them with opacity + Y rise via
+    // GSAP ScrollTrigger. Fires once per heading when it enters the viewport.
+    // Applies to all visible h1/h2 EXCEPT: hidden sections, .sr-only, and
+    // scroll-features slide headings (which have their own slide animation).
+    // Respects prefers-reduced-motion (skips animation entirely).
+    (function () {
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+      if (typeof SplitText === 'undefined') return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      gsap.registerPlugin(ScrollTrigger, SplitText);
+
+      const SPLIT_OPTS = {
+        splitType: 'words',
+        delay: 35,                          // ms stagger between words
+        duration: 0.9,                      // seconds per word
+        ease: 'power3.out',
+        from: { opacity: 0, yPercent: 100 },  // each word starts one full line BELOW its natural row
+        to:   { opacity: 1, yPercent: 0 },    // rises into place; mask clips the off-position word
+        threshold: 0.15,
+        rootMargin: '-50px',
+      };
+
+      function applySplit(el, opts) {
+        const o = Object.assign({}, SPLIT_OPTS, opts || {});
+        const startPct = (1 - o.threshold) * 100;
+        const m = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(o.rootMargin);
+        const val = m ? parseFloat(m[1]) : 0;
+        const unit = m ? (m[2] || 'px') : 'px';
+        const sign = val === 0 ? ''
+          : val < 0 ? `-=${Math.abs(val)}${unit}`
+          : `+=${val}${unit}`;
+        const start = `top ${startPct}%${sign}`;
+
+        // Trim leading/trailing whitespace from innerHTML before SplitText so
+        // formatted-HTML indents don't render as a visible space before the
+        // first masked word. Preserves all inner structure (spans, <br>, etc.).
+        const trimmed = el.innerHTML.replace(/^\s+|\s+$/g, '');
+        if (trimmed !== el.innerHTML) el.innerHTML = trimmed;
+
+        const split = new SplitText(el, {
+          type: o.splitType,
+          mask: o.splitType.includes('words') ? 'words' : o.splitType,  // overflow-hidden mask per token
+          smartWrap: true,
+          wordsClass: 'split-word',
+          charsClass: 'split-char',
+          linesClass: 'split-line',
+          onSplit: (self) => {
+            let targets = [];
+            if (o.splitType.includes('chars') && self.chars && self.chars.length) targets = self.chars;
+            if (!targets.length && o.splitType.includes('words') && self.words && self.words.length) targets = self.words;
+            if (!targets.length && o.splitType.includes('lines') && self.lines && self.lines.length) targets = self.lines;
+            if (!targets.length) targets = self.chars || self.words || self.lines || [];
+
+            return gsap.fromTo(targets, { ...o.from }, {
+              ...o.to,
+              duration: o.duration,
+              ease: o.ease,
+              stagger: o.delay / 1000,
+              scrollTrigger: {
+                trigger: el,
+                start,
+                once: true,
+                fastScrollEnd: true,
+              },
+              willChange: 'transform, opacity',
+              force3D: true,
+            });
+          },
+        });
+        return split;
+      }
+
+      // Pick visible section headings to animate.
+      // Exclude hidden ancestors, sr-only, and scroll-features slide headings.
+      function collectTargets() {
+        const all = document.querySelectorAll('section h1, section h2');
+        const out = [];
+        all.forEach((h) => {
+          if (h.classList.contains('sr-only')) return;
+          if (h.closest('.hidden')) return;
+          if (h.closest('.sf-slide')) return;    // scroll-features slides animate via CSS keyframes
+          out.push(h);
+        });
+        return out;
+      }
+
+      function init() {
+        collectTargets().forEach((h) => applySplit(h));
+        // headings can change geometry after fonts load; refresh ScrollTrigger so
+        // start positions stay correct
+        ScrollTrigger.refresh();
+      }
+
+      if (document.fonts && document.fonts.status !== 'loaded') {
+        document.fonts.ready.then(init);
+      } else {
+        init();
+      }
     })();
   </script>
 </body>

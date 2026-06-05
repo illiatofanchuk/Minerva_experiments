@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MINERVA — Scroll indicator preview</title>
+<style>
+  :root{
+    --bg:#F9FAFC;
+    --pill-bg:#EDEFF2;
+    --dot-idle:#CBD5E1;   /* upcoming */
+    --dot-done:#1E293B;   /* passed   */
+    --track:#CBD5E1;      /* capsule track */
+    --fill:#1E293B;       /* capsule fill  */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg);
+    font-family:system-ui,-apple-system,sans-serif;color:#334155;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:36px;min-height:100vh;padding:24px;
+  }
+
+  /* ===== the indicator component ===== */
+  .indicator{
+    display:inline-flex;align-items:center;justify-content:center;gap:12px;
+    padding:14px 20px;background:var(--pill-bg);border-radius:9999px;user-select:none;
+  }
+  .seg{
+    position:relative;height:8px;width:8px;border-radius:9999px;
+    background:var(--dot-idle);overflow:hidden;flex:0 0 auto;
+    transition:width .45s cubic-bezier(.22,1,.36,1), background-color .35s ease;
+  }
+  .seg.done{ background:var(--dot-done); }
+  .seg.active{ width:48px; background:var(--track); }
+  .seg .fill{
+    position:absolute;inset:0 auto 0 0;width:0%;
+    background:var(--fill);border-radius:9999px;
+    transition:width .12s linear;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .seg,.seg .fill{transition:none}
+  }
+
+  /* ===== preview chrome (not part of the component) ===== */
+  .stage{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .hint{font-size:13px;color:#94A3B8;text-align:center;max-width:360px;line-height:1.5}
+  .controls{display:flex;gap:8px}
+  button{
+    font:inherit;font-size:13px;padding:8px 14px;border-radius:8px;
+    border:1px solid #CBD5E1;background:#fff;color:#334155;cursor:pointer;
+  }
+  button:hover{background:#F1F5F9}
+  .readout{font-size:12px;color:#94A3B8;font-variant-numeric:tabular-nums}
+  .label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8}
+
+  /* ---- sticky-scroll demo layout ---- */
+  body{display:block}                 /* override the centering flex from above */
+  .filler{
+    min-height:80vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;
+    color:#94A3B8;font-size:14px;
+  }
+  .filler p{font-size:18px;color:#64748B;margin:0}
+  .filler.top{background:linear-gradient(#F1F5F9,#F9FAFC)}
+  .filler.bottom{background:linear-gradient(#F9FAFC,#F1F5F9)}
+
+  .sticky-wrap{height:140vh;position:relative}   /* tall enough to "pin" the inner */
+  .sticky-inner{
+    position:sticky;top:0;height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg);
+  }
+  .stage{display:flex;flex-direction:column;align-items:center;gap:18px}
+</style>
+</head>
+<body>
+
+  <!-- content ABOVE the sticky section, to show scroll arriving from the top -->
+  <section class="filler top">
+    <p>Scroll down ↓</p>
+    <span>Page content above</span>
+  </section>
+
+  <!-- STICKY SECTION: pins while the 3 steps are consumed, then releases -->
+  <section class="sticky-wrap">
+    <div class="sticky-inner">
+      <div class="stage">
+        <span class="label">Scroll indicator</span>
+        <div class="indicator" id="indicator" role="tablist" aria-label="Slide progress"></div>
+        <div class="readout" id="readout"></div>
+        <p class="hint">
+          While inside this section the wheel fills the active capsule instead of
+          scrolling the page. After the 3rd step fills, scroll is released and the
+          page continues down. Scrolling back up re-enters the steps.
+        </p>
+        <div class="controls">
+          <button id="prev">‹ Prev</button>
+          <button id="next">Next ›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- content BELOW, revealed once the steps are done and scroll is released -->
+  <section class="filler bottom">
+    <span>Page content below</span>
+    <p>↑ released after step 3</p>
+  </section>
+
+<script>
+  const N = 3;                 // three steps
+  const THRESHOLD = 600;       // px of wheel delta to fill one capsule (higher = smoother / more scroll)
+
+  let index = 0;               // active step
+  let p = 0;                   // local progress 0..1
+  let acc = 0;                 // scroll accumulator for active step
+
+  const elIndicator = document.getElementById('indicator');
+  const elReadout   = document.getElementById('readout');
+
+  const segs = [];
+  for(let i=0;i<N;i++){
+    const s = document.createElement('div');
+    s.className = 'seg'; s.setAttribute('role','tab');
+    const f = document.createElement('div'); f.className = 'fill';
+    s.appendChild(f); elIndicator.appendChild(s);
+    segs.push({s,f});
+  }
+
+  function render(){
+    segs.forEach((seg,i)=>{
+      const isActive = i===index;
+      seg.s.classList.toggle('active', isActive);
+      seg.s.classList.toggle('done', !isActive && i < index);  // passed steps darken
+      seg.s.setAttribute('aria-selected', isActive ? 'true':'false');
+      seg.f.style.width = isActive ? (p*100).toFixed(1)+'%' : '0%';
+    });
+    elReadout.textContent = `step ${index+1}/${N}  ·  fill ${(p*100).toFixed(0)}%`;
+  }
+
+  // Are we at the very end (last step full) or very start (first step empty)?
+  function atEnd(){   return index===N-1 && p>=1; }
+  function atStart(){ return index===0 && p<=0; }
+
+  // Apply a wheel delta to the steps. Returns TRUE if the delta was fully
+  // consumed by the indicator (page scroll should be blocked), FALSE if we are
+  // at a boundary and the page should scroll instead.
+  function consume(dy){
+    // boundary release: let the page scroll past the section
+    if(dy>0 && atEnd())   return false;   // scrolling down, already finished
+    if(dy<0 && atStart()) return false;   // scrolling up, already at start
+
+    acc += dy;
+
+    while(acc >= THRESHOLD && index < N-1){     // fill complete -> next step
+      acc -= THRESHOLD; index++;
+    }
+    while(acc < 0 && index > 0){                // scrolled back -> prev step
+      index--; acc += THRESHOLD;
+    }
+    // clamp at the ends
+    if(index===N-1) acc = Math.min(acc, THRESHOLD);
+    if(index===0)   acc = Math.max(acc, 0);
+
+    p = acc/THRESHOLD;
+    render();
+    return true;                                // consumed
+  }
+
+  // ---- sticky scroll capture ----
+  const wrap = document.querySelector('.sticky-wrap');
+  let raf=null, queued=0;
+
+  // The wrap is taller than the viewport; the inner pins for that whole range.
+  // We only want to drive the steps from ONE fixed scroll position (the top of
+  // the wrap). pinTop is that position.
+  function pinTop(){ return wrap.offsetTop; }
+  function pinBottom(){ return wrap.offsetTop + wrap.offsetHeight - window.innerHeight; }
+
+  // Are we within the pinned range at all?
+  function inRange(){
+    const y = window.scrollY;
+    return y >= pinTop()-1 && y <= pinBottom()+1;
+  }
+
+  window.addEventListener('wheel', (e)=>{
+    if(!inRange()) return;               // outside the section: normal page scroll
+
+    // at a boundary in the scroll direction -> release the page
+    if(e.deltaY>0 && atEnd()){
+      // jump to the bottom of the pin range so the page scrolls on from there
+      if(window.scrollY < pinBottom()) window.scrollTo(0, pinBottom());
+      return;
+    }
+    if(e.deltaY<0 && atStart()){
+      // sit at the top of the pin range so the page scrolls up from there
+      if(window.scrollY > pinTop()) window.scrollTo(0, pinTop());
+      return;
+    }
+
+    e.preventDefault();
+    // SNAP: lock the page at the top of the pin range while driving the steps,
+    // so it can't drift into the tall wrap (the cause of the abrupt jump).
+    if(Math.abs(window.scrollY - pinTop()) > 1){
+      window.scrollTo(0, pinTop());
+    }
+
+    queued += e.deltaY;
+    if(!raf){
+      raf = requestAnimationFrame(()=>{ consume(queued); queued=0; raf=null; });
+    }
+  }, {passive:false});
+
+  // buttons + keyboard
+  document.getElementById('next').onclick = ()=>{ consume(THRESHOLD); };
+  document.getElementById('prev').onclick = ()=>{ consume(-THRESHOLD); };
+  window.addEventListener('keydown',(e)=>{
+    if(!inViewport()) return;
+    if(e.key==='ArrowDown'||e.key==='ArrowRight'){ e.preventDefault(); consume(THRESHOLD); }
+    if(e.key==='ArrowUp'||e.key==='ArrowLeft'){ e.preventDefault(); consume(-THRESHOLD); }
+  });
+
+  render();
+</script>
+</body>
+</html>

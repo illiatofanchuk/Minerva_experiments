@@ -1,0 +1,72 @@
+/* MINERVA — sticky scroll stepper.
+ * The wrapper height is set inline (steps + 1) * 100vh; the inner pins. */
+
+.wrap {
+  position: relative;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ---- indicator ---- */
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #EDEFF2;        /* pill background */
+  border-radius: 9999px;
+  user-select: none;
+}
+
+.seg {
+  position: relative;
+  height: 8px;
+  width: 8px;                 /* dot size */
+  border-radius: 9999px;
+  background: #CBD5E1;        /* upcoming dot */
+  overflow: hidden;
+  flex: 0 0 auto;
+  transition: width .45s cubic-bezier(.22, 1, .36, 1),
+              background-color .35s ease;
+}
+
+.seg.done {
+  background: #1E293B;        /* passed dot */
+}
+
+.seg.active {
+  width: 48px;                /* capsule */
+  background: #CBD5E1;        /* track (unfilled part) */
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #1E293B;        /* filled part */
+  border-radius: 9999px;
+  /* width is set inline from scroll progress; keep a tiny ease so quick
+     scroll deltas don't look jumpy, but stay tight to the scroll position */
+  transition: width .08s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg,
+  .fill {
+    transition: none;
+  }
+}
