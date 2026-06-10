@@ -324,17 +324,83 @@
     }
 
     /* ===== Italy map (interactive regional breakdown) ===== */
-    .im-map-wrap { width: 100%; max-width: 560px; margin-left: auto; }
+    .im-detail {
+      transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .im-detail.is-changing { opacity: 0; }
+
+    .im-map-wrap {
+      width: 100%;
+      max-width: 560px;
+      margin-left: auto;
+      transform: scale(1.69) translate(10%, -8%);
+      transform-origin: top center;
+      will-change: transform;
+    }
     .im-map-wrap svg { width: 100%; height: auto; display: block; }
     .im-path {
       fill: #E2E8F0;
       stroke: #fff;
       stroke-width: 1;
       cursor: pointer;
-      transition: fill 0.2s ease;
+      transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
     }
-    .im-path:hover { fill: #CBD5E1; }
-    .im-path.is-active { fill: #3C4352; }
+    .im-path:hover {
+      fill: rgba(3, 106, 162, 0.6);     /* accent #036AA2 @ 60% */
+      stroke: #036AA2;
+      stroke-width: 1.5;
+    }
+    .im-path.is-active {
+      fill: #3C4352;
+      stroke: #1F2937;
+      stroke-width: 2;
+    }
+    .im-path.is-active:hover { fill: #3C4352; }  /* don't double-treat the selected region */
+
+    /* Floating tooltip */
+    .im-tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 10px 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      font-size: 13px;
+      line-height: 1.4;
+      z-index: 50;
+      max-width: 240px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 150ms ease, transform 150ms ease;
+    }
+    .im-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .im-tt-name {
+      font-size: 16px;          /* +20% over the tooltip's 13px base */
+      font-weight: 600;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+    .im-tt-stats {
+      color: #475569;
+      font-size: 12px;
+      display: flex;
+      gap: 10px;
+    }
+    .im-tt-stats span strong { color: #0F172A; font-weight: 600; }
+    .im-tt-hint {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid #E5E7EB;
+      color: #94A3B8;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
 
     /* ===== Industries list — SectorDock magnification port ===== */
     /* Ported from assets/components/sector-dock/SectorDock.tsx — rAF-driven
@@ -1756,43 +1822,52 @@
     <!-- =================================== ITALY MAP (interactive regional breakdown) =================================== -->
     <section id="italy-map" class="py-20 lg:py-28">
       <div class="max-w-container mx-auto px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
           <!-- ===== LEFT: region data ===== -->
-          <div>
-            <h2 class="h1 font-semibold text-fg leading-tight mb-4" id="imName">Doing Business in Emilia-Romagna</h2>
-            <p class="body-md text-fg-muted mb-10 lg:mb-12 max-w-md" id="imTagline">
+          <div class="im-detail" id="imDetail">
+            <h2 class="h1 font-semibold text-fg leading-tight mb-3" id="imName">Doing Business in Emilia-Romagna</h2>
+            <p class="body-md text-fg-muted mb-8 lg:mb-10 max-w-md" id="imTagline">
               A powerhouse of Italian industry, innovation, and food excellence.
             </p>
-            <dl class="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 mb-10 lg:mb-12">
+            <dl class="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-6 mb-8 lg:mb-10">
               <div>
                 <dt class="text-2xl lg:text-3xl font-medium text-fg leading-none" id="imCompanies">447,000+</dt>
-                <dd class="text-sm text-fg-muted mt-2">Companies</dd>
+                <dd class="text-sm text-fg-muted mt-0.5">Companies</dd>
               </div>
               <div>
                 <dt class="text-2xl lg:text-3xl font-medium text-fg leading-none" id="imEmployed">2.0M+</dt>
-                <dd class="text-sm text-fg-muted mt-2">Employed</dd>
+                <dd class="text-sm text-fg-muted mt-0.5">Employed</dd>
               </div>
               <div>
                 <dt class="text-2xl lg:text-3xl font-medium text-fg leading-none" id="imGdp">9.1%</dt>
-                <dd class="text-sm text-fg-muted mt-2">of GDP</dd>
+                <dd class="text-sm text-fg-muted mt-0.5">of GDP</dd>
               </div>
               <div>
                 <dt class="text-2xl lg:text-3xl font-medium text-fg leading-none" id="imExports">€90B</dt>
-                <dd class="text-sm text-fg-muted mt-2">Exports 2023</dd>
+                <dd class="text-sm text-fg-muted mt-0.5">Exports 2023</dd>
               </div>
             </dl>
-            <div class="mb-10 lg:mb-12">
-              <h3 class="text-xs font-semibold text-fg-muted uppercase mb-3" style="letter-spacing: 0.1em;">Key sectors</h3>
-              <div class="flex flex-wrap gap-2 max-w-md" id="imIndustries"></div>
+            <div class="mb-8 lg:mb-10">
+              <h3 class="text-xl font-semibold text-fg mb-[18px]">Key sectors</h3>
+              <div class="flex flex-wrap gap-2 max-w-md -ml-1" id="imIndustries"></div>
             </div>
             <div>
-              <h3 class="text-xs font-semibold text-fg-muted uppercase mb-3" style="letter-spacing: 0.1em;">Industrial districts</h3>
-              <ul class="space-y-3 max-w-md" id="imDistricts"></ul>
+              <h3 class="text-xl font-semibold text-fg mb-[18px]">Industrial districts</h3>
+              <ul class="space-y-2.5 max-w-md" id="imDistricts"></ul>
             </div>
           </div>
 
           <!-- ===== RIGHT: SVG map (inline) ===== -->
+          <div class="im-tooltip" id="imTooltip" role="tooltip" aria-hidden="true">
+            <div class="im-tt-name"></div>
+            <div class="im-tt-stats">
+              <span><strong class="im-tt-companies"></strong> companies</span>
+              <span><strong class="im-tt-gdp"></strong> of GDP</span>
+            </div>
+            <div class="im-tt-hint"></div>
+          </div>
+
           <div class="im-map-wrap">
             <svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="it (1) 1">
@@ -2122,141 +2197,27 @@
       </div>
     </section>
 
-    <!-- =================================== FEATURES =================================== -->
-    <section class="py-20 lg:py-28">
-      <div class="max-w-container mx-auto px-6 lg:px-8">
-        <div class="max-w-2xl mb-12 lg:mb-16">
-          <p class="text-sm font-medium text-accent mb-3">What you get</p>
-          <h2 class="h1 font-semibold text-fg">Three things, done well.</h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
-          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
-              <path d="M3 3v18h18" />
-              <path d="M7 16V8M12 16v-5M17 16v-3" />
-            </svg>
-            <h3 class="h2 font-semibold mb-3">47-dimension compatibility.</h3>
-            <p class="text-fg-muted leading-relaxed">
-              Operating culture, risk appetite, decision velocity, governance maturity, communication style — and 42 more. Each contributes a sub-score to the overall match, visible in every result.
-            </p>
-          </article>
-
-          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
-              <circle cx="12" cy="12" r="10" />
-              <path d="m9 12 2 2 4-4" />
-            </svg>
-            <h3 class="h2 font-semibold mb-3">Verified profiles only.</h3>
-            <p class="text-fg-muted leading-relaxed">
-              Every PMI is checked against Camera di Commercio before going live. P.IVA, codice ATECO, registered office, and authorized representative — confirmed at signup, re-checked annually.
-            </p>
-          </article>
-
-          <article class="border border-border rounded-xl p-7 lg:p-8 bg-surface hover:border-border-strong transition-colors duration-150">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-accent mb-5">
-              <line x1="8" y1="6" x2="21" y2="6" />
-              <line x1="8" y1="12" x2="21" y2="12" />
-              <line x1="8" y1="18" x2="21" y2="18" />
-              <line x1="3" y1="6" x2="3.01" y2="6" />
-              <line x1="3" y1="12" x2="3.01" y2="12" />
-              <line x1="3" y1="18" x2="3.01" y2="18" />
-            </svg>
-            <h3 class="h2 font-semibold mb-3">A list, not a feed.</h3>
-            <p class="text-fg-muted leading-relaxed">
-              Matches are presented as a ranked, scannable list. No infinite scroll, no swipe, no streaks, no notifications competing for attention. Reciprocal contact only — both companies must opt in.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================== INDUSTRIES =================================== -->
-    <section class="py-20 lg:py-28 bg-surface-alt border-y border-border">
-      <div class="max-w-container mx-auto px-6 lg:px-8">
-        <div class="max-w-2xl mb-12 lg:mb-16">
-          <p class="text-sm font-medium text-accent mb-3">Use cases</p>
-          <h2 class="h1 font-semibold text-fg">Three plausible matches across the Italian PMI landscape.</h2>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
-          <!-- Industry: Manufacturing -->
-          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
-            <div class="flex items-center justify-between mb-5">
-              <span class="text-xs font-medium text-fg-subtle font-mono">MANUFACTURING</span>
-              <span class="text-xs text-fg-subtle">Veneto → Lombardia</span>
-            </div>
-            <h3 class="h2 font-semibold mb-4">Textile manufacturer needs a logistics partner.</h3>
-            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
-              <span class="font-medium text-fg">Tessuti Belluno SpA</span>, a third-generation textile manufacturer in Veneto, is opening a B2B catalogue and needs a logistics partner with comparable governance discipline. Matched with <span class="font-medium text-fg">Lombardia Logistica SRL</span>.
-            </p>
-            <div class="pt-5 border-t border-border flex items-center justify-between">
-              <span class="text-xs text-fg-subtle">Compatibility</span>
-              <span class="font-mono text-2xl font-medium">84<span class="text-base text-fg-subtle ml-1">/100</span></span>
-            </div>
-          </article>
-
-          <!-- Industry: Tech -->
-          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
-            <div class="flex items-center justify-between mb-5">
-              <span class="text-xs font-medium text-fg-subtle font-mono">TECH SCALEUP</span>
-              <span class="text-xs text-fg-subtle">Milano → Italy</span>
-            </div>
-            <h3 class="h2 font-semibold mb-4">Software studio entering the healthcare vertical.</h3>
-            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
-              <span class="font-medium text-fg">Aurora Digital SRL</span>, a Milano-based product team, is exploring a vertical entry into Italian healthcare. Matched with <span class="font-medium text-fg">MedicHub Italia</span> — strong alignment on risk documentation and product cadence.
-            </p>
-            <div class="pt-5 border-t border-border flex items-center justify-between">
-              <span class="text-xs text-fg-subtle">Compatibility</span>
-              <span class="font-mono text-2xl font-medium">79<span class="text-base text-fg-subtle ml-1">/100</span></span>
-            </div>
-          </article>
-
-          <!-- Industry: Services -->
-          <article class="bg-surface border border-border rounded-xl p-7 lg:p-8">
-            <div class="flex items-center justify-between mb-5">
-              <span class="text-xs font-medium text-fg-subtle font-mono">SERVICES</span>
-              <span class="text-xs text-fg-subtle">Veneto → Emilia</span>
-            </div>
-            <h3 class="h2 font-semibold mb-4">Architecture studio sourcing a heritage food client.</h3>
-            <p class="text-fg-muted leading-relaxed mb-6 text-[0.9375rem]">
-              <span class="font-medium text-fg">Studio Architettura Verona</span> specializes in artisanal-production facility design. Matched with <span class="font-medium text-fg">Conserve Nonna Maria SRL</span> for a Made-in-Italy production line renovation — aligned communication tempo.
-            </p>
-            <div class="pt-5 border-t border-border flex items-center justify-between">
-              <span class="text-xs text-fg-subtle">Compatibility</span>
-              <span class="font-mono text-2xl font-medium">76<span class="text-base text-fg-subtle ml-1">/100</span></span>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
     <!-- =================================== COMPARISON =================================== -->
-    <section class="py-20 lg:py-28">
+    <section class="py-20 lg:py-28 bg-[#f1f4f8] border-y border-border">
       <div class="max-w-container mx-auto px-6 lg:px-8">
-        <div class="max-w-2xl mb-12 lg:mb-16">
+        <div class="mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">Compared to alternatives</p>
-          <h2 class="h1 font-semibold text-fg">Why not LinkedIn, why not a trade event.</h2>
+          <h2 class="h1 font-semibold text-fg">Compare how MINERVA helps companies to connect with compatible partners.</h2>
         </div>
 
         <div class="border border-border rounded-xl overflow-hidden bg-surface">
           <div class="overflow-x-auto">
             <table class="w-full text-[0.9375rem]">
               <thead>
-                <tr class="border-b border-border bg-surface-alt">
-                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm w-[34%]">Capability</th>
+                <tr class="border-b border-border bg-[#e5e7eb]">
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg w-[34%]">Capability</th>
                   <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg">
                     <div class="flex items-center gap-2">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 21V7l9-4 9 4v14" />
-                        <path d="M3 21h18" />
-                        <path d="M9 21V12h6v9" />
-                      </svg>
+                      <img src="assets/logo-dark.svg" alt="" aria-hidden="true" class="h-5 w-auto" />
                       Minerva
                     </div>
                   </th>
-                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm">LinkedIn Sales&nbsp;Navigator</th>
-                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-medium text-fg-muted text-sm">B2B trade events</th>
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg">Traditional Business Discovery</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
@@ -2265,8 +2226,7 @@
                   <td class="py-4 px-5 lg:px-6 align-top">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>Camera di Commercio</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Self-reported</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Booth presence</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Self-reported or manually verified</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cultural-fit signal</th>
@@ -2276,35 +2236,34 @@
                   <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-fg-subtle"><path d="M5 12h14"/></svg>None</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">
-                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-fg-subtle"><path d="M5 12h14"/></svg>None</span>
-                  </td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Time to first qualified match</th>
-                  <td class="py-4 px-5 lg:px-6 align-top font-mono">~72 h</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Weeks of outreach</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Months between events</td>
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>~72 h</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Weeks or months</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cost transparency</th>
-                  <td class="py-4 px-5 lg:px-6 align-top font-mono">€0 – €39 / mo</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">€99+ / seat / mo</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">€2,000+ / event</td>
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>€0 – €39 / mo</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Variable and unpredictable</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Signal-to-noise</th>
-                  <td class="py-4 px-5 lg:px-6 align-top">Ranked list of qualified matches</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Feed-driven discovery</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Booth-driven serendipity</td>
+                  <td class="py-4 px-5 lg:px-6 align-top">
+                    <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>Ranked list of qualified matches</span>
+                  </td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Search and outreach based</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">GDPR posture</th>
                   <td class="py-4 px-5 lg:px-6 align-top">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>EU-resident by design</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Compliant</td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Organizer-dependent</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Depends on provider</td>
                 </tr>
               </tbody>
             </table>
@@ -3542,6 +3501,10 @@
 
       const REGIONS = {"valle-d-aosta": {"name": "Valle d'Aosta", "capital": "Aosta", "tagline": "Small autonomous region: alpine tourism, hydroelectric energy, traditional craftsmanship.", "tier": 2, "stats": {"companies": "13,000+", "employed": "55,000+", "gdpShare": "0.3%", "exports2023": "€1.0B"}, "industries": ["Alpine tourism", "Hydroelectric energy", "Traditional craftsmanship", "Mountain viticulture"], "districts": [{"name": "Hydroelectric district (Compagnia Valdostana delle Acque)", "description": "Hydroelectric power, alpine basin management"}, {"name": "Cervinia-Courmayeur tourism hub", "description": "High-end alpine tourism, winter sports"}], "facts": null, "whyChoose": null}, "piemonte": {"name": "Piemonte", "capital": "Torino", "tagline": "Cradle of Italian industry: automotive innovation, world-class wines and mechatronics.", "tier": 1, "stats": {"companies": "390,000+", "employed": "1.7M+", "gdpShare": "7.7%", "exports2023": "€56B"}, "industries": ["Automotive and components", "Aerospace", "Mechatronics", "Wine production", "Food & beverage", "ICT and gaming", "Textiles", "Chemicals"], "districts": [{"name": "Automotive district (Torino)", "description": "Automotive, components, industrial design"}, {"name": "Langhe-Roero-Monferrato wine district", "description": "DOCG wines, UNESCO-listed gastronomic heritage"}, {"name": "Biella textile district", "description": "Premium wools, high-end fabrics"}, {"name": "Valenza jewelry district", "description": "Luxury jewelry, international goldsmithing"}], "facts": {"provinces": 8, "areaKm2": 25387, "universities": "7+", "innovationHubs": "28+"}, "whyChoose": "Piemonte combines Italy's longest industrial tradition with a strong capacity for transformation. World-class automotive cluster, UNESCO-recognized gastronomic excellence, innovation ecosystem in Torino."}, "liguria": {"name": "Liguria", "capital": "Genova", "tagline": "Gateway to the Mediterranean: ports, shipbuilding and maritime technology.", "tier": 2, "stats": {"companies": "138,000+", "employed": "590,000+", "gdpShare": "2.7%", "exports2023": "€9.5B"}, "industries": ["Shipbuilding", "Port logistics", "Maritime technology", "Floriculture", "Coastal tourism"], "districts": [{"name": "Shipbuilding district (La Spezia, Sestri)", "description": "Luxury yachts, naval vessels, repairs"}, {"name": "Genova tech hub (Erzelli)", "description": "ICT, big data, technology research"}, {"name": "Floriculture district (Sanremo, Imperia)", "description": "Floriculture, ornamental plants, EU export"}], "facts": null, "whyChoose": null}, "lombardia": {"name": "Lombardia", "capital": "Milano", "tagline": "Italy's economic engine, financial and industrial capital of the country.", "tier": 1, "stats": {"companies": "830,000+", "employed": "4.5M+", "gdpShare": "22.1%", "exports2023": "€152B"}, "industries": ["Finance and banking services", "Fashion and design", "Advanced mechanics", "Pharmaceuticals", "Chemicals", "ICT and digital", "Automotive", "Textiles"], "districts": [{"name": "Brianza district (Monza)", "description": "Furniture, interior design, woodworking"}, {"name": "Como textile district", "description": "Silk, premium fabrics, luxury fashion"}, {"name": "Vigevano leather district", "description": "Footwear, leather goods, artisanal manufacturing"}, {"name": "Lecco mechanical district", "description": "Precision mechanics, steel industry"}, {"name": "Milano-Pavia pharma-chemical district", "description": "Pharmaceuticals, biotech, fine chemistry"}], "facts": {"provinces": 12, "areaKm2": 23864, "universities": "15+", "innovationHubs": "60+"}, "whyChoose": "Lombardia accounts for 22% of national GDP, hosts the Italian Stock Exchange and over 30% of multinationals headquartered in Italy. Unique entrepreneurial ecosystem, world-class infrastructure, direct access to European markets."}, "trentino-alto-adige": {"name": "Trentino-Alto Adige", "capital": "Trento / Bolzano", "tagline": "Bilingualism, autonomy, excellence in alpine tourism and agri-food supply chains.", "tier": 2, "stats": {"companies": "100,000+", "employed": "490,000+", "gdpShare": "2.6%", "exports2023": "€10.5B"}, "industries": ["Mountain agri-food", "Alpine tourism", "Renewable energy", "Wood and furniture", "Wine production"], "districts": [{"name": "Apple district (Val di Non, Val Venosta)", "description": "DOP apples, European leader in production"}, {"name": "Alto Adige wine district", "description": "Premium white wines, Pinot Grigio"}, {"name": "Wood district (Val Pusteria, Val di Fiemme)", "description": "Structural timber, furniture, sustainable building"}], "facts": null, "whyChoose": null}, "veneto": {"name": "Veneto", "capital": "Venezia", "tagline": "Land of industrial districts and exports, where artisan tradition meets Industry 4.0.", "tier": 1, "stats": {"companies": "475,000+", "employed": "2.2M+", "gdpShare": "9.4%", "exports2023": "€85B"}, "industries": ["Fashion and textiles", "Footwear", "Furniture and interior design", "Eyewear", "Wine production", "Mechanical engineering", "Jewelry", "Port logistics"], "districts": [{"name": "Riviera del Brenta district", "description": "Luxury footwear, high-end leather goods"}, {"name": "Belluno eyewear district", "description": "Eyewear, world leader in the sector"}, {"name": "Treviso furniture district", "description": "Furniture, interior design, woodworking"}, {"name": "Verona-Treviso wine district", "description": "DOC and DOCG wines, Prosecco, Amarone"}, {"name": "Vicenza goldsmithing district", "description": "Jewelry, gold and precious metals processing"}], "facts": {"provinces": 7, "areaKm2": 18345, "universities": "8+", "innovationHubs": "35+"}, "whyChoose": "Veneto is Italy's leading region for per-capita exports. Dense network of specialized SMEs, world-renowned districts, strategic access to Central European markets via the Port of Venezia."}, "friuli-venezia-giulia": {"name": "Friuli-Venezia Giulia", "capital": "Trieste", "tagline": "Crossroads between Central Europe and the Mediterranean: hub for logistics and shipbuilding.", "tier": 2, "stats": {"companies": "100,000+", "employed": "510,000+", "gdpShare": "2.4%", "exports2023": "€18.5B"}, "industries": ["Shipbuilding", "Port logistics", "Furniture and interior design", "Cutlery", "Wine production"], "districts": [{"name": "Shipbuilding district (Monfalcone - Fincantieri)", "description": "Cruise ships, world leader"}, {"name": "Furniture district (Manzano, Pordenone)", "description": "Chairs, furniture, interior design"}, {"name": "Cutlery district (Maniago)", "description": "Knives, blades, steel craftsmanship"}], "facts": null, "whyChoose": null}, "emilia-romagna": {"name": "Emilia-Romagna", "capital": "Bologna", "tagline": "A powerhouse of Italian industry, innovation, and food excellence.", "tier": 1, "stats": {"companies": "447,000+", "employed": "2.0M+", "gdpShare": "9.1%", "exports2023": "€90B"}, "industries": ["Automotive and Motor Valley", "Industrial machinery", "Food & beverage", "Packaging", "Ceramics", "Biomedical and pharmaceuticals", "Fashion and textiles", "ICT and innovation"], "districts": [{"name": "Motor Valley (Modena, Bologna, Parma)", "description": "Automotive, supercars, components"}, {"name": "Packaging Valley (Bologna)", "description": "Packaging machinery and automation"}, {"name": "Food Valley (Parma)", "description": "Food production, DOP excellence"}, {"name": "Ceramic district (Sassuolo, Modena, Reggio Emilia)", "description": "Premium ceramics and surfaces"}, {"name": "Biomedical district (Bologna, Mirandola)", "description": "Healthcare, life sciences, medical devices"}], "facts": {"provinces": 9, "areaKm2": 22123, "universities": "12+", "innovationHubs": "30+"}, "whyChoose": "Strategic location in the heart of Europe, skilled workforce, solid infrastructure, and a collaborative business culture make Emilia-Romagna one of Italy's most competitive regions."}, "toscana": {"name": "Toscana", "capital": "Firenze", "tagline": "Made in Italy excellence: fashion, leather goods, jewelry, and world-class tourism.", "tier": 1, "stats": {"companies": "365,000+", "employed": "1.6M+", "gdpShare": "6.7%", "exports2023": "€48B"}, "industries": ["Fashion and leather goods", "Jewelry", "Marble and stone", "Wine production", "Cultural tourism", "Nautical", "Pharmaceuticals", "Textiles"], "districts": [{"name": "Leather goods district (Firenze, Scandicci)", "description": "Luxury leather goods, home to major maisons"}, {"name": "Prato textile district", "description": "Textiles, raw material recycling, fashion"}, {"name": "Arezzo goldsmithing district", "description": "Jewelry, gold processing"}, {"name": "Carrara marble district", "description": "Marble, stone industry, unique worldwide"}, {"name": "Viareggio nautical district", "description": "Shipbuilding, luxury yachts"}], "facts": {"provinces": 10, "areaKm2": 22987, "universities": "9+", "innovationHubs": "22+"}, "whyChoose": "Toscana is synonymous with Made in Italy. Home to major luxury maisons, artisanal districts with centuries-old know-how, recognizable international brands. A unique combination of cultural heritage and industrial capacity."}, "marche": {"name": "Marche", "capital": "Ancona", "tagline": "Region of districts: footwear, mechanics, furniture, and nautical.", "tier": 2, "stats": {"companies": "165,000+", "employed": "640,000+", "gdpShare": "2.4%", "exports2023": "€13.5B"}, "industries": ["Footwear", "Furniture and interior design", "Machine tools", "Nautical", "Agri-food"], "districts": [{"name": "Footwear district (Fermo, Macerata)", "description": "High-end footwear, leather processing"}, {"name": "Furniture district (Pesaro-Urbino)", "description": "Kitchen furniture, interior design"}, {"name": "Machine tools district (Ancona)", "description": "Precision mechanics, automation"}], "facts": null, "whyChoose": null}, "umbria": {"name": "Umbria", "capital": "Perugia", "tagline": "The green heart of Italy: agri-food, artistic ceramics, and cashmere.", "tier": 2, "stats": {"companies": "90,000+", "employed": "340,000+", "gdpShare": "1.3%", "exports2023": "€4.5B"}, "industries": ["Cashmere and textiles", "Artistic ceramics", "Agri-food (olive oil, wine)", "Steel", "Cultural tourism"], "districts": [{"name": "Cashmere district (Solomeo - Brunello Cucinelli)", "description": "Luxury cashmere, international brands"}, {"name": "Artistic ceramics district (Deruta, Gualdo Tadino)", "description": "Artisanal ceramics, centuries-old tradition"}, {"name": "Agri-food district (extra virgin olive oil DOP)", "description": "Olive oil, truffles, DOC wines"}], "facts": null, "whyChoose": null}, "lazio": {"name": "Lazio", "capital": "Roma", "tagline": "Italy's political and administrative heart: hub for services, research, and aerospace industry.", "tier": 1, "stats": {"companies": "510,000+", "employed": "2.4M+", "gdpShare": "11.0%", "exports2023": "€33B"}, "industries": ["Public administration and services", "Aerospace", "Audiovisual and cinema", "Pharmaceuticals", "Tourism", "ICT", "Research and development", "Renewable energy"], "districts": [{"name": "Aerospace district (Roma)", "description": "Aerospace, defense, satellites"}, {"name": "Audiovisual district (Cinecittà)", "description": "Cinema, audiovisual production, post-production"}, {"name": "Pomezia-Latina pharma hub", "description": "Pharmaceuticals, biotech, clinical research"}, {"name": "Green chemistry district (Frosinone)", "description": "Chemistry, packaging, sustainable materials"}], "facts": {"provinces": 5, "areaKm2": 17236, "universities": "20+", "innovationHubs": "40+"}, "whyChoose": "Lazio combines political centrality, one of Europe's largest research ecosystems, presence of multinationals, and access to public funds. Roma is a strategic hub for companies working with public institutions, research, and the aerospace sector."}, "abruzzo": {"name": "Abruzzo", "capital": "L'Aquila", "tagline": "Between sea and Apennines: automotive, pharmaceuticals, and nature-based tourism.", "tier": 2, "stats": {"companies": "145,000+", "employed": "490,000+", "gdpShare": "1.8%", "exports2023": "€9.2B"}, "industries": ["Automotive", "Pharmaceuticals", "Agri-food", "Nature-based tourism"], "districts": [{"name": "Automotive hub (Val di Sangro - Sevel)", "description": "Stellantis plant, commercial vehicles"}, {"name": "Pharma hub (L'Aquila, Pescara)", "description": "Pharmaceuticals, biotech, clinical research"}, {"name": "Agri-food district (Montepulciano d'Abruzzo)", "description": "DOC wines, olive oil, artisanal pasta"}], "facts": null, "whyChoose": null}, "molise": {"name": "Molise", "capital": "Campobasso", "tagline": "The smallest region in the South: agri-food, artisanal pasta, and tradition.", "tier": 2, "stats": {"companies": "32,000+", "employed": "100,000+", "gdpShare": "0.4%", "exports2023": "€0.7B"}, "industries": ["Agri-food", "Artisanal pasta", "Traditional agriculture", "Local crafts"], "districts": [{"name": "Pasta district (Campobasso, La Molisana)", "description": "Durum wheat pasta, regional tradition"}, {"name": "Agri-food district (caciocavallo, truffle)", "description": "Typical cheeses, Molise white truffle"}], "facts": null, "whyChoose": null}, "campania": {"name": "Campania", "capital": "Napoli", "tagline": "Hub of the South: agri-food, aerospace, fashion, and one of the most important port supply chains in the Mediterranean.", "tier": 1, "stats": {"companies": "455,000+", "employed": "1.6M+", "gdpShare": "6.4%", "exports2023": "€16B"}, "industries": ["Agri-food", "Aerospace", "Shipbuilding", "Fashion", "Canning (tomato)", "Leather goods", "Tourism", "Port logistics"], "districts": [{"name": "Aerospace district (Pomigliano, Capua)", "description": "Aeronautics, components, research"}, {"name": "Tomato district (Salerno, Napoli)", "description": "Canned tomatoes, San Marzano DOP, agri-food export"}, {"name": "Leather goods district (Solofra)", "description": "Leather goods, tanning, leather processing"}, {"name": "Goldsmithing district (Torre del Greco)", "description": "Coral, cameos, traditional jewelry"}], "facts": {"provinces": 5, "areaKm2": 13671, "universities": "8+", "innovationHubs": "18+"}, "whyChoose": "Campania offers the Port of Napoli, one of the largest in the Mediterranean, a young workforce, a unique concentration of agri-food excellence, and an aerospace sector of European significance."}, "puglia": {"name": "Puglia", "capital": "Bari", "tagline": "The heel of Italy: agri-food, energy, ICT in Bari, and international tourism.", "tier": 2, "stats": {"companies": "335,000+", "employed": "1.2M+", "gdpShare": "4.2%", "exports2023": "€11.0B"}, "industries": ["Agri-food (olive oil, wine)", "Upholstered furniture", "Aerospace", "Renewable energy", "Tourism"], "districts": [{"name": "Sofa district (Murgia, Altamura)", "description": "Upholstered furniture, European leader"}, {"name": "Agri-food district (extra virgin olive oil DOP)", "description": "Olive oil, Italy's top producer"}, {"name": "Aerospace hub (Grottaglie, Brindisi)", "description": "Aeronautics, Boeing 787 components"}], "facts": null, "whyChoose": null}, "basilicata": {"name": "Basilicata", "capital": "Potenza", "tagline": "Between two coasts: extraction, automotive, and cultural tourism (Matera).", "tier": 2, "stats": {"companies": "50,000+", "employed": "180,000+", "gdpShare": "0.7%", "exports2023": "€2.8B"}, "industries": ["Automotive", "Oil extraction", "Agri-food", "Cultural tourism"], "districts": [{"name": "Automotive hub (Melfi - Stellantis)", "description": "Stellantis plant, vehicle production"}, {"name": "Extraction district (Val d'Agri)", "description": "Oil, largest onshore field in the EU"}, {"name": "Matera cultural hub", "description": "UNESCO heritage, audiovisual, cultural tourism"}], "facts": null, "whyChoose": null}, "calabria": {"name": "Calabria", "capital": "Catanzaro", "tagline": "Tip of the boot: agriculture, coastal tourism, Port of Gioia Tauro.", "tier": 2, "stats": {"companies": "165,000+", "employed": "540,000+", "gdpShare": "1.7%", "exports2023": "€0.5B"}, "industries": ["Agri-food", "Port logistics", "Coastal tourism", "Bergamot and citrus"], "districts": [{"name": "Bergamot district (Reggio Calabria)", "description": "Bergamot essential oil, worldwide exclusive"}, {"name": "Gioia Tauro logistics hub", "description": "Largest container port in the central Mediterranean"}, {"name": "Agri-food district (Tropea red onion IGP)", "description": "Red onion, citrus, chili pepper"}], "facts": null, "whyChoose": null}, "sicilia": {"name": "Sicilia", "capital": "Palermo", "tagline": "Mediterranean crossroads: agri-food, energy, ICT, and quality tourism.", "tier": 2, "stats": {"companies": "385,000+", "employed": "1.3M+", "gdpShare": "5.0%", "exports2023": "€11.5B"}, "industries": ["Agri-food", "Energy (petrochemicals)", "ICT", "Cultural tourism", "Shipbuilding"], "districts": [{"name": "Agri-food district (Pachino tomato IGP, citrus)", "description": "Fruit and vegetables, citrus, Etna DOC wines"}, {"name": "Petrochemical hub (Siracusa, Gela)", "description": "Refining, industrial chemistry"}, {"name": "Etna Valley tech hub (Catania)", "description": "Microelectronics, STMicroelectronics"}], "facts": null, "whyChoose": null}, "sardegna": {"name": "Sardegna", "capital": "Cagliari", "tagline": "Island of traditions: agro-pastoral, premium tourism, renewable energy.", "tier": 2, "stats": {"companies": "150,000+", "employed": "540,000+", "gdpShare": "2.1%", "exports2023": "€5.8B"}, "industries": ["Renewable energy", "Premium tourism", "Agro-pastoral (cheeses)", "Petrochemicals", "ICT"], "districts": [{"name": "Pecorino Sardo DOP district", "description": "Sheep cheeses, international export"}, {"name": "Costa Smeralda tourism hub", "description": "Luxury tourism, premium nautical"}, {"name": "Petrochemical hub (Sarroch, Porto Torres)", "description": "Refining, green chemistry"}], "facts": null, "whyChoose": null}};
 
+      const detail = document.getElementById('imDetail');
+      const FADE_MS = 300;
+      let activeSlug = null;
+
       const els = {
         name: document.getElementById('imName'),
         tagline: document.getElementById('imTagline'),
@@ -3571,10 +3534,8 @@
         return (n >= 1000 ? Math.round(n / 1000) + 'K' : String(n)) + (m[2] || '');
       }
 
-      function activate(slug) {
-        const r = REGIONS[slug];
+      function applyRegion(r) {
         if (!r) return;
-        paths.forEach((p) => p.classList.toggle('is-active', p.dataset.slug === slug));
         if (els.name)      els.name.textContent      = 'Doing Business in ' + r.name;
         if (els.tagline)   els.tagline.textContent   = r.tagline || '';
         if (els.companies) els.companies.textContent = formatK(r.stats.companies);
@@ -3588,15 +3549,76 @@
         if (els.districts) {
           els.districts.innerHTML = (r.districts || []).map((d) => `
             <li>
-              <div class="text-sm font-semibold text-fg">${escapeHtml(d.name)}</div>
+              <div class="text-sm font-semibold text-[#475569]">${escapeHtml(d.name)}</div>
               <div class="text-sm text-fg-muted mt-0.5">${escapeHtml(d.description)}</div>
             </li>
           `).join('');
         }
       }
 
+      function activate(slug) {
+        const r = REGIONS[slug];
+        if (!r) return;
+        if (slug === activeSlug) return;   // no-op when same region
+        paths.forEach((p) => p.classList.toggle('is-active', p.dataset.slug === slug));
+        activeSlug = slug;
+        // On the very first activate (no prior content shown), apply immediately.
+        if (!detail || !detail.dataset.seeded) {
+          applyRegion(r);
+          if (detail) detail.dataset.seeded = '1';
+          return;
+        }
+        // Otherwise: fade out → swap mid-fade → fade in (same pattern as
+        // .sf-ind-detail in the Industries section).
+        detail.classList.add('is-changing');
+        setTimeout(() => {
+          applyRegion(r);
+          detail.classList.remove('is-changing');
+        }, FADE_MS);
+      }
+
+      // ===== Tooltip wiring =====
+      const tooltip = document.getElementById('imTooltip');
+      const tipName = tooltip && tooltip.querySelector('.im-tt-name');
+      const tipCompanies = tooltip && tooltip.querySelector('.im-tt-companies');
+      const tipGdp = tooltip && tooltip.querySelector('.im-tt-gdp');
+      const tipHint = tooltip && tooltip.querySelector('.im-tt-hint');
+
+      function positionTooltip(e) {
+        if (!tooltip) return;
+        const rect = tooltip.getBoundingClientRect();
+        const pad = 12;
+        let x = e.clientX + pad;
+        let y = e.clientY + pad;
+        if (x + rect.width  > window.innerWidth)  x = e.clientX - rect.width  - pad;
+        if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - pad;
+        tooltip.style.left = x + 'px';
+        tooltip.style.top  = y + 'px';
+      }
+
+      function showTooltip(slug) {
+        if (!tooltip) return;
+        const r = REGIONS[slug];
+        if (!r) return;
+        if (tipName)      tipName.textContent      = r.name;
+        if (tipCompanies) tipCompanies.textContent = formatK(r.stats.companies);
+        if (tipGdp)       tipGdp.textContent       = r.stats.gdpShare;
+        if (tipHint)      tipHint.textContent      = r.tier === 1 ? 'Click for details' : 'Click to view';
+        tooltip.classList.add('is-visible');
+        tooltip.setAttribute('aria-hidden', 'false');
+      }
+
+      function hideTooltip() {
+        if (!tooltip) return;
+        tooltip.classList.remove('is-visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+      }
+
       paths.forEach((p) => {
         p.addEventListener('click', () => activate(p.dataset.slug));
+        p.addEventListener('mouseenter', () => showTooltip(p.dataset.slug));
+        p.addEventListener('mousemove', positionTooltip);
+        p.addEventListener('mouseleave', hideTooltip);
       });
 
       // Seed default
