@@ -323,23 +323,61 @@
       max-width: 220px;
     }
 
-    /* ===== Industries list (clickable verticals + cross-fade detail panel) ===== */
+    /* ===== Industries list — SectorDock magnification port ===== */
+    /* Ported from assets/components/sector-dock/SectorDock.tsx — rAF-driven
+       transform: scale(var(--scale)) with cosine falloff on hover; serif
+       index numerals + accent dot when active or hovered.                  */
+    .sf-ind-list { list-style: none; padding: 0; margin: 0; }
     .sf-ind-item {
-      display: block;
+      --scale: 1;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 7px 4px;
       width: 100%;
       text-align: left;
-      font-size: 1.5rem;      /* ~ text-2xl */
-      font-weight: 500;
-      line-height: 1.25;
-      color: var(--color-fg-muted, #64748B);
-      transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1), font-weight 200ms ease;
+      background: transparent;
+      border: 0;
       cursor: pointer;
+      position: relative;
+      color: var(--color-fg-muted, #64748B);
+      transform-origin: left center;
+      transform: scale(var(--scale));
+      will-change: transform;
+      transition: color 0.4s ease;
+      -webkit-tap-highlight-color: transparent;
     }
     .sf-ind-item:hover { color: var(--color-fg, #0F172A); }
-    .sf-ind-item.is-active {
-      color: var(--color-fg, #0F172A);
-      font-weight: 700;
+    .sf-ind-item.is-active { color: var(--color-fg, #0F172A); }
+
+    .sf-ind-idx {
+      font-family: inherit;            /* Google Sans Flex from <body> */
+      font-size: clamp(1.05rem, 2.1vw, 1.35rem);   /* matches .sf-ind-label */
+      font-weight: 400;                /* matches label weight */
+      width: 2.4ch;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+      opacity: 0.55;
+      transition: opacity 0.4s ease, color 0.4s ease;
     }
+    .sf-ind-item.is-active .sf-ind-idx {
+      opacity: 1;
+      color: var(--color-accent, #036AA2);
+    }
+
+    .sf-ind-label {
+      font-size: clamp(1.05rem, 2.1vw, 1.35rem);
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    @media (hover: none) {
+      .sf-ind-item { transform: scale(1) !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sf-ind-item { transform: scale(1) !important; }
+    }
+
     .sf-ind-detail {
       transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -1638,31 +1676,52 @@
           <div>
             <p class="text-sm font-medium text-accent mb-3" style="letter-spacing: 0.12em; text-transform: uppercase;">Who Minerva is for</p>
             <h2 id="industries-it" class="h1 font-semibold text-fg mb-10 lg:mb-12">Built for the Italian productive fabric</h2>
-            <ul class="space-y-4" role="tablist" aria-label="Industries">
+            <ul class="sf-ind-list space-y-1" id="sfIndList" role="tablist" aria-label="Industries">
               <li>
-                <button type="button" data-industry="manufacturing" class="sf-ind-item is-active" role="tab" aria-selected="true">Manufacturing</button>
+                <button type="button" data-industry="manufacturing" class="sf-ind-item is-active" role="tab" aria-selected="true">
+                  <span class="sf-ind-idx">01</span>
+                  <span class="sf-ind-label">Manufacturing</span>
+                </button>
               </li>
               <li>
-                <button type="button" data-industry="technology" class="sf-ind-item" role="tab" aria-selected="false">Technology &amp; Software</button>
+                <button type="button" data-industry="technology" class="sf-ind-item" role="tab" aria-selected="false">
+                  <span class="sf-ind-idx">02</span>
+                  <span class="sf-ind-label">Technology &amp; Software</span>
+                </button>
               </li>
               <li>
-                <button type="button" data-industry="food" class="sf-ind-item" role="tab" aria-selected="false">Food &amp; Beverage</button>
+                <button type="button" data-industry="food" class="sf-ind-item" role="tab" aria-selected="false">
+                  <span class="sf-ind-idx">03</span>
+                  <span class="sf-ind-label">Food &amp; Beverage</span>
+                </button>
               </li>
               <li>
-                <button type="button" data-industry="professional" class="sf-ind-item" role="tab" aria-selected="false">Professional Services</button>
+                <button type="button" data-industry="professional" class="sf-ind-item" role="tab" aria-selected="false">
+                  <span class="sf-ind-idx">04</span>
+                  <span class="sf-ind-label">Professional Services</span>
+                </button>
               </li>
               <li>
-                <button type="button" data-industry="health" class="sf-ind-item" role="tab" aria-selected="false">Health &amp; Medical Services</button>
+                <button type="button" data-industry="health" class="sf-ind-item" role="tab" aria-selected="false">
+                  <span class="sf-ind-idx">05</span>
+                  <span class="sf-ind-label">Health &amp; Medical Services</span>
+                </button>
               </li>
               <li>
-                <button type="button" data-industry="logistics" class="sf-ind-item" role="tab" aria-selected="false">Logistics &amp; Transport</button>
+                <button type="button" data-industry="logistics" class="sf-ind-item" role="tab" aria-selected="false">
+                  <span class="sf-ind-idx">06</span>
+                  <span class="sf-ind-label">Logistics &amp; Transport</span>
+                </button>
               </li>
             </ul>
           </div>
 
           <!-- ===== RIGHT: detail panel (image + description + CTA) ===== -->
           <div class="sf-ind-detail" id="sfIndDetail" role="tabpanel">
-            <div class="aspect-[16/9] rounded-2xl mb-8" style="background-color: #E5E7EB;" aria-hidden="true"></div>
+            <img class="sf-ind-img aspect-[16/9] w-full rounded-2xl mb-8 object-cover bg-surface-alt"
+                 src="assets/images/industry-manufacturing.jpg"
+                 alt="" />
+
             <p class="sf-ind-desc body-md text-fg-muted mb-8 max-w-prose">
               Mock description for the selected industry. This area will be replaced with sector-specific copy once the content is ready. Click any item on the left to swap this text with another industry's preview.
             </p>
@@ -3379,6 +3438,69 @@
       }
     })();
 
+    // ===== Industries list — SectorDock magnification port =====
+    // rAF loop interpolates per-item --scale toward a target computed from
+    // cursor Y distance. Cosine falloff inside a `spread` radius (item-heights).
+    // Skipped on touch (hover: none) and prefers-reduced-motion.
+    (function () {
+      const list = document.getElementById('sfIndList');
+      if (!list) return;
+      const items = Array.from(list.querySelectorAll('.sf-ind-item'));
+      if (!items.length) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (!window.matchMedia('(hover: hover)').matches) return;
+
+      const MAX_SCALE = 1.22;
+      const SPREAD = 1.7;
+      const EASE = 0.14;
+
+      const state = items.map(() => ({ cur: 1, target: 1 }));
+      let activeY = null;
+      let rafId = null;
+
+      function computeTargets() {
+        items.forEach((el, i) => {
+          const s = state[i];
+          if (activeY === null) { s.target = 1; return; }
+          const rect = el.getBoundingClientRect();
+          const center = rect.top + rect.height / 2;
+          const dist = Math.abs(activeY - center) / rect.height;
+          let scale = 1;
+          if (dist < SPREAD) {
+            const t = dist / SPREAD;
+            scale = 1 + (MAX_SCALE - 1) * Math.pow(Math.cos((t * Math.PI) / 2), 2);
+          }
+          s.target = scale;
+        });
+      }
+
+      function loop() {
+        let moving = false;
+        items.forEach((el, i) => {
+          const s = state[i];
+          s.cur += (s.target - s.cur) * EASE;
+          if (Math.abs(s.target - s.cur) > 0.0005) moving = true;
+          else s.cur = s.target;
+          el.style.setProperty('--scale', s.cur.toFixed(4));
+        });
+        rafId = moving ? requestAnimationFrame(loop) : null;
+      }
+
+      function kick() {
+        computeTargets();
+        if (rafId === null) rafId = requestAnimationFrame(loop);
+      }
+
+      list.addEventListener('mousemove', (e) => {
+        activeY = e.clientY;
+        kick();
+      });
+      list.addEventListener('mouseleave', () => {
+        activeY = null;
+        kick();
+      });
+    })();
+
     // ===== Industries tab list (click to swap detail panel) =====
     // Left col has 6 verticals as <button data-industry>; right col fades out,
     // swaps description text, fades back in. Active button has .is-active class.
@@ -3387,15 +3509,16 @@
       const detail = document.getElementById('sfIndDetail');
       if (!buttons.length || !detail) return;
       const descEl = detail.querySelector('.sf-ind-desc');
+      const imgEl = detail.querySelector('.sf-ind-img');
       if (!descEl) return;
 
       const data = {
-        manufacturing: 'Mock copy for Manufacturing. Italian PMI in this sector find supply-chain partners, certified suppliers, and international distributors aligned with their values. Connect with industry peers and grow your footprint across European markets.',
-        technology:    'Mock copy for Technology & Software. Italian software houses, digital scaleups, and IT consultancies connect with enterprise clients looking for transformation partners with shared tech vision and operational rigor.',
-        food:          'Mock copy for Food & Beverage. DOP/IGP producers, artisanal preserves, and regional specialties reach distributors and HORECA partners that value provenance, quality, and the stories behind every product.',
-        professional:  'Mock copy for Professional Services. Architecture studios, consultancies, and B2B service firms find corporate clients aligned with their methodology and specializations — long-term retainers, not one-off projects.',
-        health:        'Mock copy for Health & Medical Services. Healthcare groups, clinics, and B2B medical suppliers connect with companies that put employee wellbeing at the centre — partnerships rooted in trust and compliance.',
-        logistics:     'Mock copy for Logistics & Transport. Logistics operators and freight providers connect with manufacturing PMI for durable supply-chain partnerships — optimized routes, reduced risk, operational backbone.',
+        manufacturing: { img: 'assets/images/industry-manufacturing.jpg', desc: 'Mock copy for Manufacturing. Italian PMI in this sector find supply-chain partners, certified suppliers, and international distributors aligned with their values. Connect with industry peers and grow your footprint across European markets.' },
+        technology:    { img: 'assets/images/industry-technology.jpg',    desc: 'Mock copy for Technology & Software. Italian software houses, digital scaleups, and IT consultancies connect with enterprise clients looking for transformation partners with shared tech vision and operational rigor.' },
+        food:          { img: 'assets/images/industry-food.jpg',          desc: 'Mock copy for Food & Beverage. DOP/IGP producers, artisanal preserves, and regional specialties reach distributors and HORECA partners that value provenance, quality, and the stories behind every product.' },
+        professional:  { img: 'assets/images/industry-professional.jpg',  desc: 'Mock copy for Professional Services. Architecture studios, consultancies, and B2B service firms find corporate clients aligned with their methodology and specializations — long-term retainers, not one-off projects.' },
+        health:        { img: 'assets/images/industry-health.jpg',        desc: 'Mock copy for Health & Medical Services. Healthcare groups, clinics, and B2B medical suppliers connect with companies that put employee wellbeing at the centre — partnerships rooted in trust and compliance.' },
+        logistics:     { img: 'assets/images/industry-logistics.jpg',     desc: 'Mock copy for Logistics & Transport. Logistics operators and freight providers connect with manufacturing PMI for durable supply-chain partnerships — optimized routes, reduced risk, operational backbone.' },
       };
 
       const FADE_MS = 300;
@@ -3408,8 +3531,11 @@
         });
         detail.classList.add('is-changing');
         setTimeout(() => {
-          const copy = data[id];
-          if (copy) descEl.textContent = copy;
+          const entry = data[id];
+          if (entry) {
+            descEl.textContent = entry.desc;
+            if (imgEl && entry.img) imgEl.src = entry.img;
+          }
           detail.classList.remove('is-changing');
         }, FADE_MS);
       }
@@ -3421,10 +3547,12 @@
         });
       });
 
-      // Seed the panel with the default-active industry's copy
+      // Seed the panel with the default-active industry's copy + image
       const initial = document.querySelector('.sf-ind-item.is-active');
       if (initial && data[initial.dataset.industry]) {
-        descEl.textContent = data[initial.dataset.industry];
+        const entry = data[initial.dataset.industry];
+        descEl.textContent = entry.desc;
+        if (imgEl && entry.img) imgEl.src = entry.img;
       }
     })();
 
