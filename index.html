@@ -109,10 +109,29 @@
       border-radius: 6px;
     }
 
+    /* Auto-hide header on scroll down — position:fixed + transform translateY
+       is the most reliable cross-browser combo for a slide-up effect. */
+    #siteHeader {
+      position: fixed !important;
+      top: 0; left: 0; right: 0;
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+    }
+    #siteHeader.is-hidden { transform: translateY(-100%); }
+    /* Compensate for the now-fixed header so first section doesn't slide under it. */
+    body { padding-top: 64px; }
+
     /* Accordion icon rotation */
     details[open] > summary .chev { transform: rotate(180deg); }
     summary::-webkit-details-marker { display: none; }
     summary { list-style: none; cursor: pointer; }
+
+    /* FAQ accordion smooth height animation — JS-controlled because native
+       <details> uses display: none on closed content which can't transition. */
+    .faq-collapse {
+      overflow: hidden;
+      transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
     /* Comparison table row hover */
     tbody tr:hover { background-color: var(--surface-alt); }
@@ -718,7 +737,7 @@
 <body class="bg-bg text-fg antialiased">
 
   <!-- =================================== NAV =================================== -->
-  <header class="sticky top-0 z-50 bg-bg/85 backdrop-saturate-150 border-b border-border" style="-webkit-backdrop-filter: saturate(1.5); backdrop-filter: saturate(1.5);">
+  <header id="siteHeader" class="sticky top-0 z-50 bg-white border-b border-border">
     <div class="max-w-container mx-auto px-6 lg:px-8">
       <nav class="flex h-16 items-center justify-between">
         <a href="#top" class="flex items-center gap-2.5 -ml-1 px-1 py-1 rounded">
@@ -728,9 +747,9 @@
         </a>
 
         <div class="hidden md:flex items-center gap-7 text-sm">
-          <a href="#how" class="text-fg-muted hover:text-fg transition-colors duration-150">Product</a>
+          <a href="#scroll-features" class="text-fg-muted hover:text-fg transition-colors duration-150">Product</a>
           <a href="#pricing" class="text-fg-muted hover:text-fg transition-colors duration-150">Pricing</a>
-          <a href="#trust" class="text-fg-muted hover:text-fg transition-colors duration-150">Trust</a>
+          <a href="#testimonials" class="text-fg-muted hover:text-fg transition-colors duration-150">Trust</a>
           <a href="#faq" class="text-fg-muted hover:text-fg transition-colors duration-150">FAQ</a>
         </div>
 
@@ -745,9 +764,6 @@
             </svg>
           </button>
           <a href="#cta" class="hidden sm:inline-flex text-sm text-fg-muted hover:text-fg px-3 h-10 items-center rounded-[10px] transition-colors duration-150">Sign in</a>
-          <a href="#cta" class="inline-flex items-center gap-1.5 h-10 px-4 rounded-[10px] bg-primary text-on-primary text-sm font-medium hover:bg-primary-hover transition-colors duration-150">
-            Request a demo
-          </a>
         </div>
       </nav>
     </div>
@@ -770,15 +786,15 @@
               Discover opportunities you wouldn't find on your own.
             </p>
             <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-10">
-              <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
-                Request a demo
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <a href="#cta" class="group inline-flex items-center justify-center gap-2 h-11 px-9 rounded-full bg-fg text-bg text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity">
+                Explore platform
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </a>
-              <a href="#pricing" class="inline-flex items-center gap-1.5 h-12 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
-                View the free plan
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <a href="#pricing" class="group inline-flex items-center gap-1.5 h-12 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
+                View plans
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </a>
@@ -2704,7 +2720,7 @@
     </section>
 
     <!-- =================================== TRUST DEEP-DIVE =================================== -->
-    <section id="trust" class="py-20 lg:py-28">
+    <section id="trust" class="hidden py-20 lg:py-28">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="max-w-2xl mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">Trust &amp; security</p>
@@ -2735,236 +2751,148 @@
     </section>
 
     <!-- =================================== FAQ =================================== -->
-    <section id="faq" class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+    <section id="faq" class="py-20 lg:py-28 bg-surface-alt border-t border-border">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="max-w-3xl mx-auto text-center mb-12 lg:mb-16">
-          <p class="text-sm font-medium text-accent mb-3" style="letter-spacing: 0.12em; text-transform: uppercase;">FAQ</p>
           <h2 class="h1 font-semibold text-fg mb-4">Frequently asked questions</h2>
           <p class="body-lg text-fg-muted">Answers to the most common questions Italian PMI have about Minerva.</p>
         </div>
 
-        <div class="max-w-3xl mx-auto space-y-3">
-          <!-- 1. Chi sta dietro -->
-          <details class="group bg-surface border border-border rounded-xl">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
+          <div class="space-y-3">
+            <details class="group bg-surface rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12z" />
-                    <path d="m9 12 2 2 4-4" />
-                  </svg>
-                </div>
+                <img src="assets/icons/faq-who-behind.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
                 <span class="font-semibold text-fg text-left">Who is behind Minerva?</span>
               </div>
               <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
               <p class="text-fg-muted leading-relaxed">
                 Minerva is an Italian platform founded in 2024 by a team with deep experience in the Italian PMI ecosystem. We work closely with the Camera di Commercio and trade associations to ensure the platform respects the specifics of the Italian market. Headquartered in Milan, with a publicly verifiable P.IVA.
               </p>
-            </div>
+            </div></div>
           </details>
-
-          <!-- 2. Quanto costa -->
-          <details class="group bg-surface border border-border rounded-xl">
+            <details class="group bg-surface rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="6" width="18" height="13" rx="2" />
-                    <path d="M3 10h18" />
-                    <path d="M7 15h2" />
-                    <path d="M14 15h3" />
-                  </svg>
-                </div>
-                <span class="font-semibold text-fg text-left">What does Minerva really cost?</span>
-              </div>
-              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-            </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
-              <p class="text-fg-muted leading-relaxed">
-                The Free plan is free, always. Forever. It lets you create your profile, see matches and send up to 3 requests per month. Premium starts at €39/month (billed annually) and includes unlimited full matches, reviews and direct contacts. You can cancel anytime, no penalties.
-              </p>
-            </div>
-          </details>
-
-          <!-- 3. Quanto tempo serve -->
-          <details class="group bg-surface border border-border rounded-xl">
-            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
-              <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                </div>
+                <img src="assets/icons/faq-results.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
                 <span class="font-semibold text-fg text-left">How long does it take to get results?</span>
               </div>
               <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
               <p class="text-fg-muted leading-relaxed">
                 Creating the profile takes about 10 minutes. Camera di Commercio verification is automatic and completes within 24 hours. The first matches arrive within 48 hours of verification. Most companies start their first qualified conversation within the first week.
               </p>
-            </div>
+            </div></div>
           </details>
-
-          <!-- 4. Suitable for small companies -->
-          <details class="group bg-surface border border-border rounded-xl">
+            <details class="group bg-surface rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </div>
-                <span class="font-semibold text-fg text-left">Is Minerva suitable for small companies too?</span>
-              </div>
-              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-            </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
-              <p class="text-fg-muted leading-relaxed">
-                Yes. Minerva is built specifically for Italian PMI — from micro-enterprises (1-10 employees) to medium-sized companies (50-250 employees). The algorithm accounts for company size in matching, so a micro-enterprise isn't suggested to an enterprise (or vice versa) unless there's real compatibility.
-              </p>
-            </div>
-          </details>
-
-          <!-- 5. Sector coverage -->
-          <details class="group bg-surface border border-border rounded-xl">
-            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
-              <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="m12 2 4 7H8l4-7Z" />
-                    <rect x="14" y="13" width="8" height="8" rx="1.5" />
-                    <circle cx="6" cy="17" r="4" />
-                  </svg>
-                </div>
+                <img src="assets/icons/faq-sector.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
                 <span class="font-semibold text-fg text-left">Is my sector covered by Minerva?</span>
               </div>
               <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
               <p class="text-fg-muted leading-relaxed">
                 We currently cover manufacturing, technology, food &amp; beverage, professional services, health and logistics. We're expanding to new sectors every month. If your sector isn't covered yet, you can sign up for free and you'll be among the first to know when we add it.
               </p>
-            </div>
+            </div></div>
           </details>
-
-          <!-- 6. Chi vede i dati -->
-          <details class="group bg-surface border border-border rounded-xl">
+            <details class="group bg-surface rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="11" width="18" height="11" rx="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                </div>
-                <span class="font-semibold text-fg text-left">Who sees my company's data?</span>
-              </div>
-              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-            </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
-              <p class="text-fg-muted leading-relaxed">
-                Only the companies you actively choose to connect with. Basic profile information (sector, size, values) is visible to all verified companies, but sensitive data (exact revenue, contacts, detailed org chart) is shared only after your explicit authorization, case by case.
-              </p>
-            </div>
-          </details>
-
-          <!-- 7. Diff vs LinkedIn / fiere -->
-          <details class="group bg-surface border border-border rounded-xl">
-            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
-              <div class="flex items-center gap-4 min-w-0">
-                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-fg shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="m17 3 4 4-4 4" />
-                    <path d="M21 7H9" />
-                    <path d="m7 21-4-4 4-4" />
-                    <path d="M3 17h12" />
-                  </svg>
-                </div>
+                <img src="assets/icons/faq-different.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
                 <span class="font-semibold text-fg text-left">How is this different from LinkedIn or a trade fair?</span>
               </div>
               <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
             </summary>
-            <div class="px-5 pb-5 pl-[4.25rem]">
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
               <p class="text-fg-muted leading-relaxed">
                 LinkedIn is great for individual careers; Minerva is built for B2B relationships between companies. Trade fairs offer physical presence but at high cost and with random contacts. Minerva combines the verification of a trade fair (real companies, verified decision-makers) with the scalability of digital (algorithmic matching, continuous contacts, predictable costs).
               </p>
-            </div>
+            </div></div>
           </details>
-        </div>
+          </div>
 
-        <!-- Bottom: contact support box -->
-        <div class="max-w-2xl mx-auto mt-10 lg:mt-12 p-6 lg:p-7 rounded-xl bg-surface border border-border text-center">
-          <p class="text-base font-semibold text-fg mb-1">Didn't find your answer?</p>
-          <p class="text-sm text-fg-muted mb-4">Our team responds within 4 business hours.</p>
-          <div class="flex flex-wrap justify-center items-center gap-3">
-            <a href="mailto:supporto@minerva.it" class="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-[10px] border border-border-strong bg-surface text-fg text-[0.9375rem] font-medium hover:bg-surface-alt transition-colors duration-150">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="4" width="20" height="16" rx="2" />
-                <path d="m2 7 10 6 10-6" />
-              </svg>
-              supporto@minerva.it
-            </a>
-            <a href="#pricing" class="inline-flex items-center gap-1.5 px-3 h-11 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
-              View plans and pricing
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+          <div class="space-y-3">
+            <details class="group bg-surface rounded-xl">
+            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
+              <div class="flex items-center gap-4 min-w-0">
+                <img src="assets/icons/faq-cost.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
+                <span class="font-semibold text-fg text-left">What does Minerva really cost?</span>
+              </div>
+              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
+              <p class="text-fg-muted leading-relaxed">
+                The Free plan is free, always. Forever. It lets you create your profile, see matches and send up to 3 requests per month. Premium starts at €39/month (billed annually) and includes unlimited full matches, reviews and direct contacts. You can cancel anytime, no penalties.
+              </p>
+            </div></div>
+          </details>
+            <details class="group bg-surface rounded-xl">
+            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
+              <div class="flex items-center gap-4 min-w-0">
+                <img src="assets/icons/faq-small.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
+                <span class="font-semibold text-fg text-left">Is Minerva suitable for small companies too?</span>
+              </div>
+              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
+              <p class="text-fg-muted leading-relaxed">
+                Yes. Minerva is built specifically for Italian PMI — from micro-enterprises (1-10 employees) to medium-sized companies (50-250 employees). The algorithm accounts for company size in matching, so a micro-enterprise isn't suggested to an enterprise (or vice versa) unless there's real compatibility.
+              </p>
+            </div></div>
+          </details>
+            <details class="group bg-surface rounded-xl">
+            <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
+              <div class="flex items-center gap-4 min-w-0">
+                <img src="assets/icons/faq-data.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
+                <span class="font-semibold text-fg text-left">Who sees my company's data?</span>
+              </div>
+              <svg class="chev shrink-0 text-fg-subtle transition-transform duration-200" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="faq-collapse"><div class="px-5 pb-5 pl-[4.25rem]">
+              <p class="text-fg-muted leading-relaxed">
+                Only the companies you actively choose to connect with. Basic profile information (sector, size, values) is visible to all verified companies, but sensitive data (exact revenue, contacts, detailed org chart) is shared only after your explicit authorization, case by case.
+              </p>
+            </div></div>
+          </details>
+
+          <!-- "Have more questions?" — integrated as the last item of the right column -->
+          <div class="flex items-center justify-between gap-4 bg-surface rounded-xl px-5 h-[61px]">
+            <div class="flex items-center gap-4 min-w-0">
+              <img src="assets/icons/faq-contact.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
+              <span class="font-semibold text-fg">Have more questions?</span>
+            </div>
+            <a href="#contact" class="inline-flex items-center justify-center h-9 px-5 rounded-full border border-border-strong bg-white text-fg text-sm font-semibold hover:bg-surface-alt transition-colors">
+              Contact us
             </a>
           </div>
+          </div>
+
         </div>
       </div>
     </section>
 
-    <!-- =================================== FINAL CTA =================================== -->
-    <section id="cta" class="py-20 lg:py-28">
-      <div class="max-w-container mx-auto px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto text-center">
-          <h2 class="display font-semibold text-fg mb-5">Find a partner who operates like you.</h2>
-          <p class="body-lg text-fg-muted mb-9 max-w-xl mx-auto">
-            Set up your profile in twenty minutes. First qualified match typically within seventy-two hours.
-          </p>
-          <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
-            <a href="#cta" class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-[10px] bg-primary text-on-primary text-[0.9375rem] font-medium hover:bg-primary-hover transition-colors duration-150">
-              Request a demo
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </a>
-            <a href="#pricing" class="inline-flex items-center gap-1.5 h-12 text-[0.9375rem] font-medium text-accent hover:text-accent-strong transition-colors duration-150">
-              View the free plan
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <!-- =================================== FOOTER =================================== -->
-  <footer class="border-t border-border bg-surface-alt">
+  <footer class="bg-surface-alt">
     <div class="max-w-container mx-auto px-6 lg:px-8 py-14">
       <div class="grid lg:grid-cols-12 gap-10 lg:gap-12">
         <div class="lg:col-span-5">
-          <a href="#top" class="inline-flex items-center gap-2.5 mb-5">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-primary">
-              <path d="M3 21V7l9-4 9 4v14" />
-              <path d="M3 21h18" />
-              <path d="M9 21V12h6v9" />
-            </svg>
+          <a href="#top" class="inline-flex items-center gap-2.5 -ml-1 px-1 py-1 rounded mb-5">
+            <img src="assets/logo-light.svg" alt="" width="32" height="32" class="block dark:hidden" />
+            <img src="assets/logo-dark.svg" alt="" width="32" height="32" class="hidden dark:block" />
             <span class="font-semibold tracking-tight text-[1.0625rem]">Minerva</span>
           </a>
           <p class="text-sm text-fg-muted max-w-sm leading-relaxed mb-5">
             B2B matchmaking for Italian PMI. Cultural compatibility on 47 dimensions, verified through Camera di Commercio.
           </p>
-          <address class="not-italic text-xs text-fg-subtle font-mono leading-relaxed">
-            Minerva SRL · P.IVA IT12345678901<br />
-            Camera di Commercio di Milano · REA MI-1234567<br />
-            Via dei Mercanti 3, 20121 Milano, IT
-          </address>
         </div>
 
         <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-8">
@@ -3009,7 +2937,7 @@
 
       <div class="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-fg-subtle">
         <span>© 2026 Minerva SRL. All rights reserved.</span>
-        <span class="font-mono">Built in Milano · Made in Italy</span>
+        <span>Built in Milano · Made in Italy</span>
       </div>
     </div>
   </footer>
@@ -4111,6 +4039,79 @@
       } else {
         init();
       }
+    })();
+
+    // ===== Auto-hide header on scroll down, reveal on scroll up =====
+    (function () {
+      const header = document.getElementById('siteHeader');
+      if (!header) return;
+
+      let lastY = window.scrollY;
+      let hidden = false;
+
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        const delta = y - lastY;
+
+        if (y < 80) {
+          if (hidden) { header.classList.remove('is-hidden'); hidden = false; }
+        } else if (delta > 2 && !hidden) {
+          header.classList.add('is-hidden');
+          hidden = true;
+        } else if (delta < -2 && hidden) {
+          header.classList.remove('is-hidden');
+          hidden = false;
+        }
+
+        lastY = y;
+      }, { passive: true });
+    })();
+
+    // ===== FAQ accordion smooth open/close animation =====
+    // Native <details> sets display:none on collapsed content, so CSS-only
+    // height transitions don't work. We intercept the summary click, manage
+    // the open attribute manually, and animate height 0 ↔ scrollHeight via
+    // the CSS transition declared on .faq-collapse.
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const items = document.querySelectorAll('#faq details');
+      if (!items.length) return;
+
+      items.forEach((d) => {
+        const wrap = d.querySelector('.faq-collapse');
+        if (!wrap) return;
+        // Initial state — collapsed
+        if (!d.hasAttribute('open')) wrap.style.height = '0';
+
+        const summary = d.querySelector('summary');
+        if (!summary) return;
+        summary.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (d.open) {
+            // Closing: start from current height → 0
+            wrap.style.height = wrap.scrollHeight + 'px';
+            // force reflow so the browser registers the starting height
+            void wrap.offsetHeight;
+            wrap.style.height = '0';
+            wrap.addEventListener('transitionend', function done(ev) {
+              if (ev.propertyName !== 'height') return;
+              d.open = false;
+              wrap.removeEventListener('transitionend', done);
+            });
+          } else {
+            // Opening: force open first so content lays out, animate 0 → scrollHeight
+            d.open = true;
+            wrap.style.height = '0';
+            void wrap.offsetHeight;
+            wrap.style.height = wrap.scrollHeight + 'px';
+            wrap.addEventListener('transitionend', function done(ev) {
+              if (ev.propertyName !== 'height') return;
+              wrap.style.height = 'auto';   // adapt if content reflows later
+              wrap.removeEventListener('transitionend', done);
+            });
+          }
+        });
+      });
     })();
 
     // ===== Pricing cards entry animation (vertical rise + zoom-in on scroll) =====
