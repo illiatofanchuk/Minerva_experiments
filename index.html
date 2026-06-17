@@ -92,10 +92,20 @@
       text-rendering: optimizeLegibility;
     }
 
-    .display { font-size: clamp(1.625rem, 5.5vw, 3.75rem); line-height: 1.1; letter-spacing: -0.025em; }
+    .display { font-size: clamp(1.875rem, 5.5vw, 3.75rem); line-height: 1.1; letter-spacing: -0.025em; }
     .h1 { font-size: clamp(1.5rem, 3.6vw, 2.5rem); line-height: 1.15; letter-spacing: -0.02em; }
     .h2 { font-size: clamp(1.125rem, 1.9vw, 1.625rem); line-height: 1.3; letter-spacing: -0.01em; }
     .body-lg { font-size: clamp(0.9375rem, 1.2vw, 1.1875rem); line-height: 1.55; }
+    .body-md { font-size: 1rem; line-height: 1.55; }
+
+    /* Mobile-specific typography overrides — boost legibility on small screens */
+    @media (max-width: 640px) {
+      .display { font-size: 2.25rem; line-height: 1.1; }     /* 36px */
+      .h1      { font-size: 1.75rem; line-height: 1.2; }      /* 28px */
+      .h2      { font-size: 1.25rem; line-height: 1.3; }      /* 20px */
+      .body-lg { font-size: 1.0625rem; line-height: 1.55; }   /* 17px */
+      .body-md { font-size: 1rem; line-height: 1.55; }        /* 16px */
+    }
 
     /* Mobile safety net: never allow horizontal scroll */
     html, body { overflow-x: hidden; }
@@ -205,10 +215,16 @@
       .card-stack [data-card="supplier"],
       .card-stack [data-card="partner"]  { z-index: 1; position: relative; }
     }
-    /* Mobile fallback: only center card visible */
+    /* Mobile: all 3 cards stacked vertically, equal heights, reordered so Client match is on top */
     @media (max-width: 1023px) {
-      .card-stack [data-card="supplier"],
-      .card-stack [data-card="partner"] { display: none; }
+      .card-stack > article {
+        min-height: 12rem;
+        position: relative;
+        will-change: transform, opacity;
+      }
+      .card-stack [data-card="client"]   { order: 1; z-index: 3; }
+      .card-stack [data-card="supplier"] { order: 2; z-index: 2; }
+      .card-stack [data-card="partner"]  { order: 3; z-index: 1; }
     }
 
     /* ===== Supplier card: horizontal chips marquee ===== */
@@ -669,6 +685,109 @@
         transition: opacity 0.15s linear;
       }
     }
+
+    /* ===== Scroll-features mobile (≤1023px): unfold all slides vertically =====
+       Flatten the grid (text-left | visual-right) into a single column where each
+       text slide is followed by its paired visual slide. No pin, no stepper, all
+       slides visible. Implemented via `display: contents` to unwrap the existing
+       text/visual containers + CSS `order` to interleave. */
+    @media (max-width: 1023px) {
+      #scroll-features .sf-pin > div > .grid {
+        display: flex !important;
+        flex-direction: column;
+        gap: 2.5rem;
+        min-height: 0 !important;
+      }
+      #scroll-features .sf-pin > div > .grid > .flex.flex-col,
+      #scroll-features .sf-text-slides,
+      #scroll-features .sf-visual-slides {
+        display: contents;
+      }
+      #scroll-features .sf-slide {
+        position: relative !important;
+        inset: auto !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+      #scroll-features .sf-text-slides .sf-slide[data-slide="0"]   { order: 0; }
+      #scroll-features .sf-visual-slides .sf-slide[data-slide="0"] { order: 1; }
+      #scroll-features .sf-text-slides .sf-slide[data-slide="1"]   { order: 2; }
+      #scroll-features .sf-visual-slides .sf-slide[data-slide="1"] { order: 3; }
+      #scroll-features .sf-text-slides .sf-slide[data-slide="2"]   { order: 4; }
+      #scroll-features .sf-visual-slides .sf-slide[data-slide="2"] { order: 5; }
+      #scroll-features .sf-pin .mt-auto.pt-12 { display: none; }
+      #scroll-features .sf-visual-slides .sf-slide {
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        max-width: 32rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      /* Free up the text-slides min-height (was needed for desktop overlap) */
+      #scroll-features .sf-text-slides { min-height: 0 !important; }
+      /* Fix #1: cs-scene (311×130) — lift up by 40% so there's clear gap between
+         the cards and the counter, sized so it fits the mobile container. */
+      #scroll-features .cs-scene { transform: translateY(-40%) scale(1.08); }
+      /* Fix #2: sf-vcards at scale(1.15) overflows narrow phones — drop the scale. */
+      #scroll-features .sf-vcards { transform: none; }
+      /* Fix #3: sf-rcard (Reputation, slide 2) — give breathing room on narrow phones.
+         Smaller padding, narrower label column, tighter row gap, shorter header gap,
+         smaller header text, and reduced review box top margin. */
+      #scroll-features .sf-rcard {
+        padding: 16px;
+      }
+      #scroll-features .sf-rcard .text-4xl {
+        font-size: 28px;
+      }
+      #scroll-features .sf-rcard > div:first-child {
+        margin-bottom: 20px !important;
+      }
+      #scroll-features .sf-rcard .w-32 {
+        width: 96px !important;
+      }
+      #scroll-features .sf-rcard .space-y-2\.5 > div.flex.items-center {
+        gap: 8px !important;
+      }
+      /* Center the star cluster within its flex-1 column (between label and score) */
+      #scroll-features .sf-rcard .flex.gap-0\.5.flex-1 {
+        justify-content: center;
+      }
+      #scroll-features .sf-rcard-review-box {
+        margin-top: 16px;
+      }
+      #scroll-features .sf-rcard-quote-icon {
+        width: 36px;
+      }
+      /* On mobile sf-rcard is fully transparent — no glass, no gradient, no blur.
+         The slide's bg-image shows directly through; only the rcard's typography
+         and the entrance stagger animations remain. */
+      #scroll-features .sf-rcard {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+      /* 10% darkening overlay on the slide 2 bg-image. Inset box-shadow paints
+         between background and content, so the rcard's white text stays bright. */
+      #scroll-features .sf-visual-slides .sf-slide[data-slide="2"] > div {
+        box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.1);
+      }
+      /* Fix #4: tighten internal text-slide spacing on mobile (space-y-6 → space-y-4) */
+      #scroll-features .sf-text-slides .sf-slide.space-y-6 > * + * {
+        margin-top: 1rem !important;
+      }
+      /* Tight gap WITHIN each text↔visual pair (24px) */
+      #scroll-features .sf-pin > div > .grid {
+        gap: 1.5rem !important;
+      }
+      /* Bigger gap BETWEEN pairs — extra margin on the 2nd and 3rd text-slide so
+         the previous pair clearly separates from the next. (gap + margin = ~72px) */
+      #scroll-features .sf-text-slides .sf-slide[data-slide="1"],
+      #scroll-features .sf-text-slides .sf-slide[data-slide="2"] {
+        margin-top: 3rem;
+      }
+    }
     /* Scroll-stepper indicator (ported from assets/components/scroll-stepper) */
     .sf-indicator {
       display: inline-flex;
@@ -719,14 +838,22 @@
               mask: var(--icon) center / contain no-repeat;
     }
 
-    /* ===== Partner card: endless vertical scroll of industry tiles ===== */
+    /* ===== Partner card: endless vertical scroll of industry tiles (desktop) ===== */
     @keyframes pi-marquee-y {
       from { transform: translateY(0); }
       to   { transform: translateY(-50%); }
     }
+    /* Mobile: horizontal marquee instead of vertical */
+    @keyframes pi-marquee-x {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
     .pi-track {
       animation: pi-marquee-y 30s linear infinite;
       will-change: transform;
+    }
+    @media (max-width: 1023px) {
+      .pi-track { animation: pi-marquee-x 30s linear infinite; }
     }
     @media (prefers-reduced-motion: reduce) {
       .pi-track { animation: none; }
@@ -773,7 +900,7 @@
 
     <!-- =================================== HERO =================================== -->
     <section id="hero" class="relative">
-      <div class="max-w-container mx-auto px-6 lg:px-8 pt-16 pb-20 lg:pt-24 lg:pb-28">
+      <div class="max-w-container mx-auto px-6 lg:px-8 pt-12 pb-12 lg:pt-24 lg:pb-28">
         <div class="grid lg:grid-cols-[7fr_4fr] gap-12 lg:gap-10 items-center">
           <!-- Left: copy -->
           <div>
@@ -781,11 +908,10 @@
             <h1 class="display font-semibold text-fg mb-6">
               Intelligent matches.<br /><span class="text-fg-muted">Stronger partnerships.</span>
             </h1>
-            <p class="body-lg text-fg-muted max-w-[36rem] mb-8">
-              MINERVA connects companies based on real compatibility across values, capabilities, and growth goals.<br />
-              Discover opportunities you wouldn't find on your own.
+            <p class="body-lg text-fg-muted max-w-[36rem] mb-7 lg:mb-8">
+              MINERVA connects companies based on real compatibility across values, capabilities, and growth goals. Discover opportunities you wouldn't find on your own.
             </p>
-            <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-10">
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-3 mb-8 lg:mb-10">
               <a href="#cta" class="group inline-flex items-center justify-center gap-2 h-11 px-9 rounded-full bg-fg text-bg text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity">
                 Explore platform
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-1">
@@ -1010,7 +1136,7 @@
       </div>
     </section>
     <!-- card-zone: 3 cards in natural 3-col layout above Stats (visually transformed into Hero at scroll=0) -->
-    <section id="card-zone" class="pt-16 pb-12 lg:pt-28 lg:pb-16">
+    <section id="card-zone" class="pt-0 pb-12 lg:pt-28 lg:pb-16">
       <div class="max-w-container mx-auto px-6 lg:px-8">
             <div class="card-stack">
               <!-- ===== Card 1: Partnership opportunities (left) ===== -->
@@ -1023,8 +1149,8 @@
                     More companies. More opportunities. Better matches.
                   </p>
                 </div>
-                <!-- Industry chips: endless horizontal scroll with side fades -->
-                <div class="-mx-6 lg:-mx-7 mt-6 relative overflow-hidden">
+                <!-- Industry chips: endless horizontal scroll with side fades (desktop only) -->
+                <div class="-mx-6 lg:-mx-7 mt-6 relative overflow-hidden hidden lg:block">
                   <div class="chip-track flex items-center gap-2 w-max">
                     <!-- SET 1 -->
                     <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-alt text-xs font-medium text-fg shrink-0">Insurance</span>
@@ -1053,7 +1179,7 @@
                 </div>
                 <!-- Accent growth chart — bleeds to card edges, gradient fades into card bg -->
                 <div class="-mx-6 lg:-mx-7 -mb-6 lg:-mb-7 mt-8">
-                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="supplier-chart block w-full h-40 lg:h-64" aria-hidden="true">
+                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="supplier-chart block w-full h-24 lg:h-64" aria-hidden="true">
                     <defs>
                       <linearGradient id="supplier-growth" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32" />
@@ -1075,30 +1201,36 @@
 
               <!-- ===== Card 2: Client match (center, visible initially) ===== -->
               <article data-card="client" class="rounded-xl bg-surface p-6 lg:p-7">
-                <div class="flex items-center justify-between text-xs text-fg-subtle mb-5">
+                <div class="flex items-center justify-between text-sm sm:text-xs text-fg-subtle mb-5">
                   <span class="inline-flex items-center gap-1.5">
                     <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
                     Client match
                   </span>
-                  <span class="font-mono">#MIN-04821</span>
+                  <!-- desktop: ticket id -->
+                  <span class="font-mono hidden sm:inline-block">#MIN-04821</span>
+                  <!-- mobile: compact score in top-right -->
+                  <span class="font-mono sm:hidden text-base font-semibold text-fg">
+                    <span data-count-to="87">87</span><span class="text-fg-muted">/100</span>
+                  </span>
                 </div>
-                <div class="space-y-3 mb-6">
+                <div class="space-y-3 sm:mb-6">
                   <div class="flex items-center gap-3">
-                    <img src="assets/icons/lavazza.svg" alt="" class="h-9 w-9 rounded shrink-0" />
+                    <img src="assets/icons/lavazza.svg" alt="" class="h-10 w-10 sm:h-9 sm:w-9 rounded shrink-0" />
                     <div class="min-w-0">
-                      <div class="text-sm font-semibold truncate">Lavazza</div>
-                      <div class="text-xs text-fg-subtle">Coffee &amp; Beverage · Torino</div>
+                      <div class="text-base sm:text-sm font-semibold truncate">Lavazza</div>
+                      <div class="text-[13px] sm:text-xs text-fg-subtle">Coffee &amp; Beverage · Torino</div>
                     </div>
                   </div>
                   <div class="flex items-center gap-3">
-                    <img src="assets/icons/sacmi.svg" alt="" class="h-9 w-9 rounded shrink-0" />
+                    <img src="assets/icons/sacmi.svg" alt="" class="h-10 w-10 sm:h-9 sm:w-9 rounded shrink-0" />
                     <div class="min-w-0">
-                      <div class="text-sm font-semibold truncate">SACMI</div>
-                      <div class="text-xs text-fg-subtle">Packaging Equipment · Imola</div>
+                      <div class="text-base sm:text-sm font-semibold truncate">SACMI</div>
+                      <div class="text-[13px] sm:text-xs text-fg-subtle">Packaging Equipment · Imola</div>
                     </div>
                   </div>
                 </div>
-                <div class="pt-5 mb-5 border-t border-border flex items-center justify-between">
+                <!-- desktop-only: big compatibility score block -->
+                <div class="pt-5 mb-5 border-t border-border hidden sm:flex items-center justify-between">
                   <div class="text-[0.8125rem] leading-tight">
                     Compatibility<br>score
                   </div>
@@ -1106,7 +1238,8 @@
                     <span data-count-to="87">87</span><span class="text-base text-fg-subtle ml-1">/100</span>
                   </div>
                 </div>
-                <div class="space-y-2.5 mb-5">
+                <!-- desktop-only: dimensions list with bars -->
+                <div class="space-y-2.5 mb-5 hidden sm:block">
                   <div class="flex items-center gap-3">
                     <span class="text-[0.8125rem] flex-1 truncate">Operating culture</span>
                     <div class="w-20 sm:w-24 h-1 rounded-full bg-muted overflow-hidden"><div class="h-full bg-accent" data-fill-to="82" style="width: 82%"></div></div>
@@ -1133,7 +1266,8 @@
                     <span class="font-mono text-[0.8125rem] w-7 text-right text-fg-muted" data-count-to="85">85</span>
                   </div>
                 </div>
-                <div class="pt-4 border-t border-border flex items-center justify-between text-xs">
+                <!-- desktop-only: verification footer -->
+                <div class="pt-4 border-t border-border hidden sm:flex items-center justify-between text-xs">
                   <span class="inline-flex items-center gap-1.5 text-fg-subtle">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
                     Verified · Camera di Commercio
@@ -1152,97 +1286,99 @@
                     Unlimited collaboration opportunities.
                   </p>
                 </div>
-                <!-- Endless vertical scroll of industry tiles -->
+                <!-- Endless scroll of industry tiles — horizontal on mobile, vertical on desktop -->
                 <div class="relative flex-1 mt-6">
                   <div class="absolute inset-0 overflow-hidden">
-                  <div class="pi-track flex flex-col gap-3">
+                  <div class="pi-track flex flex-row lg:flex-col gap-3 w-max lg:w-auto items-center">
 
                     <!-- ===== SET 1 (visible / semantic) ===== -->
-                    <div class="flex items-center gap-3 p-2.5">
+                    <div class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/clients.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Clients</div>
-                        <div class="text-xs text-fg-muted truncate">Find new clients</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Clients</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find new clients</div>
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-2.5">
+                    <div class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/suppliers.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Suppliers</div>
-                        <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Suppliers</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find reliable suppliers</div>
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-2.5">
+                    <div class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/partners.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Partners</div>
-                        <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Partners</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Strategic partnerships</div>
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-2.5">
+                    <div class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/collaborators.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Collaborators</div>
-                        <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Collaborators</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find talents and collaborators</div>
                       </div>
                     </div>
 
-                    <div class="flex items-center gap-3 p-2.5">
+                    <div class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/ma-operation.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
-                        <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">M&amp;A Operation</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Buying or selling a company</div>
                       </div>
                     </div>
 
                     <!-- ===== SET 2 (duplicate for seamless loop — aria-hidden) ===== -->
-                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/clients.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Clients</div>
-                        <div class="text-xs text-fg-muted truncate">Find new clients</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Clients</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find new clients</div>
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/suppliers.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Suppliers</div>
-                        <div class="text-xs text-fg-muted truncate">Find reliable suppliers</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Suppliers</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find reliable suppliers</div>
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/partners.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Partners</div>
-                        <div class="text-xs text-fg-muted truncate">Strategic partnerships</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Partners</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Strategic partnerships</div>
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/collaborators.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">Collaborators</div>
-                        <div class="text-xs text-fg-muted truncate">Find talents and collaborators</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">Collaborators</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Find talents and collaborators</div>
                       </div>
                     </div>
 
-                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5">
+                    <div aria-hidden="true" class="flex items-center gap-3 p-2.5 shrink-0">
                       <span class="industry-icon" style="--icon: url('assets/icons/ma-operation.svg')"></span>
                       <div class="min-w-0">
-                        <div class="text-sm font-semibold text-fg">M&amp;A Operation</div>
-                        <div class="text-xs text-fg-muted truncate">Buying or selling a company</div>
+                        <div class="text-sm font-semibold text-fg whitespace-nowrap">M&amp;A Operation</div>
+                        <div class="text-xs text-fg-muted whitespace-nowrap">Buying or selling a company</div>
                       </div>
                     </div>
 
                   </div>
-                  <!-- Top / bottom fades (blend into card bg-surface) -->
-                  <div class="pointer-events-none absolute inset-x-0 top-0 h-10" style="background: linear-gradient(to bottom, var(--surface), transparent);"></div>
-                  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10" style="background: linear-gradient(to top, var(--surface), transparent);"></div>
+                  <!-- Desktop: top/bottom fades; Mobile: left/right fades -->
+                  <div class="pointer-events-none absolute inset-x-0 top-0 h-10 hidden lg:block" style="background: linear-gradient(to bottom, var(--surface), transparent);"></div>
+                  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 hidden lg:block" style="background: linear-gradient(to top, var(--surface), transparent);"></div>
+                  <div class="pointer-events-none absolute inset-y-0 left-0 w-10 lg:hidden" style="background: linear-gradient(to right, var(--surface), transparent);"></div>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 w-10 lg:hidden" style="background: linear-gradient(to left, var(--surface), transparent);"></div>
                   </div>
                 </div>
               </article>
@@ -1417,24 +1553,24 @@
           <!-- ===== RIGHT: stat cards ===== -->
           <div class="space-y-4">
             <!-- Top: 200+ horizontal hero card -->
-            <article class="bg-surface-alt rounded-3xl p-7 lg:p-9 min-h-[260px] lg:min-h-[300px] flex flex-col justify-between">
+            <article class="bg-surface-alt rounded-3xl p-7 lg:p-9 lg:min-h-[300px] flex flex-col lg:justify-between">
               <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
                 Verified network
               </span>
-              <div>
+              <div class="mt-8 lg:mt-0">
                 <div class="font-mono text-5xl lg:text-7xl font-medium text-fg leading-none tracking-tight">
                   <span data-count-to="200">200</span>+
                 </div>
-                <p class="text-fg-muted text-base mt-5">Verified Italian companies</p>
+                <p class="text-fg-muted text-[18px] lg:text-base mt-2 lg:mt-5">Verified Italian companies</p>
               </div>
             </article>
 
-            <!-- Bottom row: 47 and 92% -->
-            <div class="grid grid-cols-2 gap-4">
-              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 min-h-[220px] lg:min-h-[260px] flex flex-col justify-between">
+            <!-- Bottom row: 47 and 92% (stack vertically on mobile, side-by-side on desktop) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 lg:min-h-[260px] flex flex-col lg:justify-between">
                 <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
                     <circle cx="12" cy="12" r="10" />
@@ -1442,15 +1578,15 @@
                   </svg>
                   Smart matching
                 </span>
-                <div>
+                <div class="mt-8 lg:mt-0">
                   <div class="font-mono text-5xl lg:text-6xl font-medium text-fg leading-none tracking-tight">
                     <span data-count-to="47">47</span>
                   </div>
-                  <p class="text-fg-muted text-sm mt-4">Compatibility dimensions</p>
+                  <p class="text-fg-muted text-[18px] lg:text-sm mt-2 lg:mt-4">Compatibility dimensions</p>
                 </div>
               </article>
 
-              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 min-h-[220px] lg:min-h-[260px] flex flex-col justify-between">
+              <article class="bg-surface-alt rounded-3xl p-7 lg:p-8 lg:min-h-[260px] flex flex-col lg:justify-between">
                 <span class="inline-flex items-center gap-2 text-fg-muted text-sm">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success">
                     <path d="M9 12l2 2 4-4" />
@@ -1458,11 +1594,11 @@
                   </svg>
                   Match success
                 </span>
-                <div>
+                <div class="mt-8 lg:mt-0">
                   <div class="font-mono text-5xl lg:text-6xl font-medium text-fg leading-none tracking-tight">
                     <span data-count-to="92">92</span>%
                   </div>
-                  <p class="text-fg-muted text-sm mt-4">Companies matched within the first two weeks</p>
+                  <p class="text-fg-muted text-[18px] lg:text-sm mt-2 lg:mt-4">Companies matched within the first two weeks</p>
                 </div>
               </article>
             </div>
@@ -1550,7 +1686,7 @@
     <!-- =================================== SCROLL FEATURES (sticky pinned with 3 slides) =================================== -->
     <section id="scroll-features" class="relative">
       <div class="sf-pin">
-        <div class="max-w-container mx-auto px-6 lg:px-8 py-20 lg:py-28">
+        <div class="max-w-container mx-auto px-6 lg:px-8 py-12 lg:py-28">
 
           <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-stretch min-h-[70vh]">
 
@@ -3115,6 +3251,73 @@
           if (chart) chart.classList.remove('animate');
         };
       });
+
+      // ===== Mobile (≤1023px): scroll-driven fan-out =====
+      // At scroll=0, only Client match is visible. Supplier and Partner are hidden BEHIND it
+      // (translated up to overlap, opacity 0, slightly scaled down). As user scrolls through
+      // #card-zone, they unfold downward to their natural positions. Reverses on scroll-up.
+      gsap.matchMedia().add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
+        const client   = document.querySelector('[data-card="client"]');
+        const supplier = document.querySelector('[data-card="supplier"]');
+        const partner  = document.querySelector('[data-card="partner"]');
+        const cardZone = document.querySelector('#card-zone');
+        if (!client || !supplier || !partner || !cardZone) return;
+
+        // offsetTop walk — gives natural page coords ignoring any GSAP transforms.
+        const getNaturalTop = (el) => {
+          let y = 0;
+          let current = el;
+          while (current) {
+            y += current.offsetTop || 0;
+            current = current.offsetParent;
+          }
+          return y;
+        };
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#card-zone',
+            start: 'top center',
+            end: 'top top',
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // Cards animate FROM (stacked behind Client match) TO (natural identity).
+        tl.from(supplier, {
+          y: () => getNaturalTop(client) - getNaturalTop(supplier),
+          scale: 0.94,
+          opacity: 0,
+          ease: 'none',
+          immediateRender: true,
+        }, 0);
+        tl.from(partner, {
+          y: () => getNaturalTop(client) - getNaturalTop(partner),
+          scale: 0.88,
+          opacity: 0,
+          ease: 'none',
+          immediateRender: true,
+        }, 0);
+
+        // Supplier chart growth — triggers as supplier card emerges from behind Client match
+        const chart = document.querySelector('.supplier-chart');
+        let chartTrigger;
+        if (chart) {
+          chartTrigger = ScrollTrigger.create({
+            trigger: '#card-zone',
+            start: 'top 20%',
+            once: true,
+            onEnter: () => chart.classList.add('animate'),
+          });
+        }
+
+        return () => {
+          gsap.set([supplier, partner], { clearProps: 'all' });
+          if (chart) chart.classList.remove('animate');
+          if (chartTrigger) chartTrigger.kill();
+        };
+      });
     })();
 
     // ===== Scroll-features: pinned section with 3 swapping slides =====
@@ -3233,9 +3436,11 @@
       // Split each text-slide h2 into words wrapped in overflow-hidden masks, hide
       // them initially, then trigger animateHeadingWords on slide swap via
       // setActiveSlide (slides 1, 2) or via a one-shot ScrollTrigger on section
-      // entry (slide 0).
+      // entry (slide 0). Skipped on mobile (≤1023px) where all slides are visible
+      // unfolded vertically — no swap event to trigger reveal.
       if (typeof SplitText !== 'undefined'
-          && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          && window.matchMedia('(min-width: 1024px)').matches) {
         const setupSlideHeadings = () => {
           section.querySelectorAll('.sf-text-slides .sf-slide').forEach((slide) => {
             const h2 = slide.querySelector('h2');
@@ -3301,6 +3506,75 @@
           setupSlideHeadings();
         }
       }
+
+      // ===== Mobile reveal (≤1023px): per-slide stagger when each visual scrolls in =====
+      // Desktop animates these via setActiveSlide on pin progress. On mobile all slides
+      // are unfolded vertically, so we trigger reveal per-visual via its own ScrollTrigger.
+      gsap.matchMedia().add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
+        const triggers = [];
+
+        // Slide 1 visual — sf-vcards stagger fade + y-rise
+        const v1 = section.querySelector('.sf-visual-slides [data-slide="1"]');
+        const vcards = v1 ? Array.from(v1.querySelectorAll('.sf-vcard')) : [];
+        if (vcards.length) {
+          gsap.set(vcards, { opacity: 0, y: 16 });
+          triggers.push(ScrollTrigger.create({
+            trigger: v1,
+            start: 'top 80%',
+            once: true,
+            onEnter: () => gsap.to(vcards, {
+              opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.18,
+            }),
+          }));
+        }
+
+        // Slide 2 visual — sf-rcard sequenced reveal (header → categories → review)
+        const v2 = section.querySelector('.sf-visual-slides [data-slide="2"]');
+        const rcard = v2 ? v2.querySelector('.sf-rcard') : null;
+        let rcardAll = [];
+        if (rcard) {
+          const headerEl = rcard.children[0];
+          const headerLeft = headerEl ? headerEl.children[0] : null;
+          const headerRight = headerEl ? headerEl.children[1] : null;
+          const reputationWord = headerLeft ? headerLeft.children[0] : null;
+          const subtitle = headerLeft ? headerLeft.children[1] : null;
+          const headerItems = [reputationWord, headerRight, subtitle].filter(Boolean);
+          const catContainer = rcard.children[1];
+          const categories = catContainer ? Array.from(catContainer.children) : [];
+          const review = rcard.querySelector('.sf-rcard-review-box');
+          rcardAll = [...headerItems, ...categories, review].filter(Boolean);
+          gsap.set(rcardAll, { opacity: 0 });
+          gsap.set(headerItems, { y: 16 });
+          triggers.push(ScrollTrigger.create({
+            trigger: v2,
+            start: 'top 80%',
+            once: true,
+            onEnter: () => {
+              if (headerItems.length) {
+                gsap.to(headerItems, {
+                  opacity: 1, y: 0, duration: 0.65, ease: 'power2.out', stagger: 0.12,
+                });
+              }
+              if (categories.length) {
+                gsap.to(categories, {
+                  opacity: 1, duration: 0.65, ease: 'power2.out', stagger: 0.14, delay: 0.55,
+                });
+              }
+              if (review) {
+                gsap.to(review, {
+                  opacity: 1, duration: 0.65, ease: 'power2.out', delay: 1.4,
+                });
+              }
+            },
+          }));
+        }
+
+        return () => {
+          triggers.forEach((t) => t.kill());
+          if (vcards.length) gsap.set(vcards, { clearProps: 'all' });
+          if (rcardAll.length) gsap.set(rcardAll, { clearProps: 'all' });
+        };
+      });
 
       gsap.matchMedia().add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
         const st = ScrollTrigger.create({
