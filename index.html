@@ -525,6 +525,199 @@
     .sf-ind-detail {
       transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* ===== Mobile (≤1023px): horizontal scrolling pill tabs ===== */
+    @media (max-width: 1023px) {
+      #sfIndList {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 8px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        padding: 4px 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+        overscroll-behavior-x: contain;
+      }
+      #sfIndList::-webkit-scrollbar { display: none; }
+      /* neutralize Tailwind's space-y-1 (it adds margin-top: 4px to siblings) */
+      #sfIndList > li {
+        flex-shrink: 0;
+        margin-top: 0 !important;
+      }
+      #sfIndList .sf-ind-item {
+        width: auto;
+        padding: 10px 14px;
+        border-radius: 9999px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        gap: 8px;
+        transform: none !important;
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      }
+      #sfIndList .sf-ind-item.is-active {
+        background: var(--primary);
+        color: var(--on-primary);
+        border-color: var(--primary);
+      }
+      #sfIndList .sf-ind-item.is-active .sf-ind-idx {
+        color: var(--on-primary);
+        opacity: 0.65;
+      }
+      #sfIndList .sf-ind-idx,
+      #sfIndList .sf-ind-label {
+        font-size: 14px;
+      }
+      #sfIndList .sf-ind-idx { width: auto; }
+      /* Prevent grid-cell blowout: the wide tab content was forcing the grid
+         column to its intrinsic content width (~940px), enlarging the image and
+         shifting text in the right column too. */
+      section[aria-labelledby="industries-it"] > div > div > * {
+        min-width: 0;
+      }
+      /* Tags chips: 2 rows of infinite horizontal marquee (alternating direction).
+         Used by both the Industries section (#sf-ind-tags) and the Italy section
+         (#imIndustries). Each parent sets --marquee-fade-bg to its section bg. */
+      .sf-ind-tags,
+      #imIndustries {
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+        overflow: hidden;
+        margin-left: 0 !important;
+      }
+      .sf-ind-tags { --marquee-fade-bg: var(--surface-alt); }
+      #imIndustries { --marquee-fade-bg: var(--bg); }
+      .sf-tag-row {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+      }
+      .sf-tag-track {
+        display: flex;
+        gap: 8px;
+        width: max-content;
+        animation: sf-tag-marquee 30s linear infinite;
+        will-change: transform;
+      }
+      .sf-tag-row:nth-child(2) .sf-tag-track {
+        animation-duration: 36s;
+        animation-direction: reverse;
+      }
+      .sf-tag-row::before,
+      .sf-tag-row::after {
+        content: '';
+        position: absolute;
+        top: 0; bottom: 0;
+        width: 24px;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .sf-tag-row::before {
+        left: 0;
+        background: linear-gradient(to right, var(--marquee-fade-bg), transparent);
+      }
+      .sf-tag-row::after {
+        right: 0;
+        background: linear-gradient(to left, var(--marquee-fade-bg), transparent);
+      }
+    }
+    @keyframes sf-tag-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+      .sf-tag-track { animation: none; }
+    }
+    /* Hide only the SVG map (and its tooltip) on mobile — keep the regional
+       data column intact. */
+    @media (max-width: 1023px) {
+      #italy-map .im-map-wrap,
+      #italy-map .im-tooltip { display: none; }
+      /* Region picker — native <select> styled to look inline-with-heading */
+      .im-region-select-wrap {
+        position: relative;
+        display: inline-block;
+        vertical-align: baseline;
+      }
+      .im-region-select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        border: 0;
+        font: inherit;
+        font-weight: inherit;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 0 24px 0 0;
+        line-height: inherit;
+        outline: none;
+        max-width: 100%;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+      }
+      .im-region-select:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .im-region-chevron {
+        position: absolute;
+        right: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--accent);
+        pointer-events: none;
+        transition: transform 0.2s ease;
+      }
+      .im-region-select[aria-expanded="true"] + .im-region-menu,
+      .im-region-menu:not([hidden]) {
+        display: block;
+      }
+      .im-region-select[aria-expanded="true"] .im-region-chevron {
+        transform: translateY(-50%) rotate(180deg);
+      }
+      .im-region-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        min-width: 240px;
+        max-height: 320px;
+        overflow-y: auto;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        z-index: 50;
+      }
+      .im-region-menu li {
+        padding: 10px 14px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--fg);
+        border-radius: 8px;
+        white-space: nowrap;
+        line-height: 1.2;
+      }
+      .im-region-menu li:hover {
+        background: var(--surface-alt);
+      }
+      .im-region-menu li[aria-selected="true"] {
+        background: var(--accent);
+        color: var(--on-primary);
+      }
+    }
     .sf-ind-detail.is-changing { opacity: 0; }
 
     /* ===== Verification cards (slide 2 visual) ===== */
@@ -1289,7 +1482,7 @@
                 <!-- Endless scroll of industry tiles — horizontal on mobile, vertical on desktop -->
                 <div class="relative flex-1 mt-6">
                   <div class="absolute inset-0 overflow-hidden">
-                  <div class="pi-track flex flex-row lg:flex-col gap-3 w-max lg:w-auto items-center">
+                  <div class="pi-track flex flex-row lg:flex-col gap-3 w-max lg:w-auto items-start">
 
                     <!-- ===== SET 1 (visible / semantic) ===== -->
                     <div class="flex items-center gap-3 p-2.5 shrink-0">
@@ -2008,7 +2201,21 @@
 
           <!-- ===== LEFT: region data ===== -->
           <div class="im-detail" id="imDetail">
-            <h2 class="h1 font-semibold text-fg leading-tight mb-3" id="imName">Doing Business in Emilia-Romagna</h2>
+            <!-- Desktop heading — full sentence, updated by JS -->
+            <h2 class="h1 font-semibold text-fg leading-tight mb-3 hidden lg:block" id="imName">Doing Business in Emilia-Romagna</h2>
+            <!-- Mobile heading — region as a custom button dropdown -->
+            <h2 class="h1 font-semibold text-fg leading-tight mb-3 lg:hidden">
+              Doing Business in
+              <span class="im-region-select-wrap">
+                <button type="button" id="imRegionTrigger" class="im-region-select" aria-expanded="false" aria-haspopup="listbox" aria-label="Choose region">
+                  <span id="imRegionLabel">Emilia-Romagna</span>
+                  <svg class="im-region-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <ul id="imRegionMenu" class="im-region-menu" role="listbox" hidden></ul>
+              </span>
+            </h2>
             <p class="body-md text-fg-muted mb-8 lg:mb-10 max-w-md" id="imTagline">
               A powerhouse of Italian industry, innovation, and food excellence.
             </p>
@@ -3942,7 +4149,42 @@
         exports: document.getElementById('imExports'),
         industries: document.getElementById('imIndustries'),
         districts: document.getElementById('imDistricts'),
+        regionTrigger: document.getElementById('imRegionTrigger'),
+        regionLabel: document.getElementById('imRegionLabel'),
+        regionMenu: document.getElementById('imRegionMenu'),
       };
+
+      // Mobile region picker — custom dropdown (button + ul) instead of native
+      // <select>, which had reliability quirks in some browsers. All clicks
+      // handled via document-level delegation with closest() so it's robust to
+      // any DOM reference staleness.
+      if (els.regionMenu && els.regionTrigger) {
+        els.regionMenu.innerHTML = Object.entries(REGIONS).map(
+          ([slug, r]) => `<li role="option" data-slug="${slug}" tabindex="-1">${escapeHtml(r.name)}</li>`
+        ).join('');
+        const setMenuOpen = (open) => {
+          const t = document.getElementById('imRegionTrigger');
+          const m = document.getElementById('imRegionMenu');
+          if (t) t.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (m) m.hidden = !open;
+        };
+        document.addEventListener('click', (e) => {
+          const target = e.target;
+          const menuItem = target.closest('#imRegionMenu li[data-slug]');
+          if (menuItem) {
+            activate(menuItem.dataset.slug);
+            setMenuOpen(false);
+            return;
+          }
+          if (target.closest('#imRegionTrigger')) {
+            const t = document.getElementById('imRegionTrigger');
+            setMenuOpen(t.getAttribute('aria-expanded') !== 'true');
+            return;
+          }
+          const t = document.getElementById('imRegionTrigger');
+          if (t && t.getAttribute('aria-expanded') === 'true') setMenuOpen(false);
+        });
+      }
 
       const CHIP_CLASS = 'inline-flex items-center px-3 py-1.5 rounded-full bg-surface border border-border text-sm font-medium text-fg-muted whitespace-nowrap';
 
@@ -3971,8 +4213,21 @@
         if (els.gdp)       els.gdp.textContent       = r.stats.gdpShare;
         if (els.exports)   els.exports.textContent   = r.stats.exports2023;
         if (els.industries) {
-          els.industries.innerHTML = (r.industries || [])
-            .map((t) => `<span class="${CHIP_CLASS}">${escapeHtml(t)}</span>`).join('');
+          const list = r.industries || [];
+          const chip = (t, hidden) =>
+            `<span class="${CHIP_CLASS}"${hidden ? ' aria-hidden="true"' : ''}>${escapeHtml(t)}</span>`;
+          if (!window.matchMedia('(max-width: 1023px)').matches) {
+            els.industries.innerHTML = list.map((t) => chip(t)).join('');
+          } else {
+            const row1 = list.filter((_, i) => i % 2 === 0);
+            const row2 = list.filter((_, i) => i % 2 === 1);
+            const track = (items) => {
+              const visible = items.map((t) => chip(t)).join('');
+              const dup = items.map((t) => chip(t, true)).join('');
+              return `<div class="sf-tag-row"><div class="sf-tag-track">${visible}${dup}</div></div>`;
+            };
+            els.industries.innerHTML = track(row1) + track(row2);
+          }
         }
         if (els.districts) {
           els.districts.innerHTML = (r.districts || []).map((d) => `
@@ -3987,8 +4242,16 @@
       function activate(slug) {
         const r = REGIONS[slug];
         if (!r) return;
-        if (slug === activeSlug) return;   // no-op when same region
+        if (slug === activeSlug) return;
         paths.forEach((p) => p.classList.toggle('is-active', p.dataset.slug === slug));
+        const labelEl = document.getElementById('imRegionLabel');
+        if (labelEl) labelEl.textContent = r.name;
+        const menuEl = document.getElementById('imRegionMenu');
+        if (menuEl) {
+          menuEl.querySelectorAll('li[data-slug]').forEach((li) => {
+            li.setAttribute('aria-selected', li.dataset.slug === slug ? 'true' : 'false');
+          });
+        }
         activeSlug = slug;
         // On the very first activate (no prior content shown), apply immediately.
         if (!detail || !detail.dataset.seeded) {
@@ -4171,11 +4434,26 @@
       const FADE_MS = 300;
       const CHIP_CLASS = 'inline-flex items-center px-3 py-1.5 rounded-full bg-surface border border-border text-sm font-medium text-fg-muted whitespace-nowrap';
 
+      const isMobile = () => window.matchMedia('(max-width: 1023px)').matches;
+
       function renderTags(tags) {
         if (!tagsEl) return;
-        tagsEl.innerHTML = (tags || []).map(
-          (t) => `<span class="${CHIP_CLASS}">${t}</span>`
-        ).join('');
+        const list = tags || [];
+        const chip = (t, hidden) =>
+          `<span class="${CHIP_CLASS}"${hidden ? ' aria-hidden="true"' : ''}>${t}</span>`;
+        if (!isMobile()) {
+          tagsEl.innerHTML = list.map((t) => chip(t)).join('');
+          return;
+        }
+        // Mobile: split into 2 alternating rows + duplicate each for seamless marquee
+        const row1 = list.filter((_, i) => i % 2 === 0);
+        const row2 = list.filter((_, i) => i % 2 === 1);
+        const track = (items) => {
+          const visible = items.map((t) => chip(t)).join('');
+          const dup = items.map((t) => chip(t, true)).join('');
+          return `<div class="sf-tag-row"><div class="sf-tag-track">${visible}${dup}</div></div>`;
+        };
+        tagsEl.innerHTML = track(row1) + track(row2);
       }
 
       function applyEntry(entry) {
