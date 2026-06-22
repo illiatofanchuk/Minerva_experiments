@@ -379,10 +379,17 @@
       animation: tt-scroll-up 45s linear infinite;
       will-change: transform;
     }
-    .tt-marquee:hover .tt-track { animation-play-state: paused; }
+    @media (hover: hover) {
+      .tt-marquee:hover .tt-track { animation-play-state: paused; }
+    }
     @keyframes tt-scroll-up {
       from { transform: translateY(0); }
       to   { transform: translateY(-50%); }
+    }
+    /* Pricing cards: hover bg only on hover-capable (desktop) devices, so a
+       tap on touch screens never leaves a sticky highlight. */
+    @media (hover: hover) {
+      #pricing article:hover { background-color: #F1F4F8; }
     }
     @media (prefers-reduced-motion: reduce) {
       .tt-track { animation: none; }
@@ -966,6 +973,9 @@
          between background and content, so the rcard's white text stays bright. */
       #scroll-features .sf-visual-slides .sf-slide[data-slide="2"] > div {
         box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.1);
+        /* Gutter between content and the gradient card edge (overrides p-4 16px).
+           sf-rcard is full-width / padding 0, so this is the single padding source. */
+        padding: 22px;
       }
       /* Fix #4: tighten internal text-slide spacing on mobile (space-y-6 → space-y-4) */
       #scroll-features .sf-text-slides .sf-slide.space-y-6 > * + * {
@@ -2872,7 +2882,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 max-w-6xl mx-auto">
 
           <!-- ===== FREE ===== -->
-          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
+          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col transition-colors duration-200">
                         <!-- Header: icon + name -->
             <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-free.svg" alt="" width="37" height="37" aria-hidden="true" />
@@ -2932,7 +2942,7 @@
           </article>
 
           <!-- ===== SMART ===== -->
-          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
+          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col transition-colors duration-200">
                         <!-- Header -->
             <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-smart.svg" alt="" width="37" height="37" aria-hidden="true" />
@@ -2997,7 +3007,7 @@
           </article>
 
           <!-- ===== PREMIUM ===== -->
-          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
+          <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col transition-colors duration-200">
                         <!-- Header -->
             <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-premium.svg" alt="" width="37" height="37" aria-hidden="true" />
@@ -4664,10 +4674,11 @@
       });
     })();
 
-    // ===== Pricing cards entry animation (vertical rise + zoom-in on scroll) =====
-    // Cards fade in, rise from 60px below, and scale up from 0.92 → 1.0 with a
-    // gentle stagger so they sequence in left-to-right. Fires once when the
-    // section's top hits 75% of viewport. Skips when reduced-motion is set.
+    // ===== Pricing cards entry animation (per-card rise + zoom-in + list) =====
+    // Each plan card fades in, rises from below, scales up, then staggers its
+    // feature list — fired PER CARD when that card's top hits 75% of viewport,
+    // so all three plans animate identically to the FREE card. On mobile (cards
+    // stacked) each fires as the user reaches it. Skips when reduced-motion is set.
     (function () {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -4677,42 +4688,41 @@
       if (!section) return;
       const cards = section.querySelectorAll('article');
       if (!cards.length) return;
-      // Group list items per card so each card's list can run its own internal
-      // stagger but all 3 cards start at the SAME moment in the timeline.
-      const cardLists = Array.from(cards)
-        .map((c) => Array.from(c.querySelectorAll('ul li')))
-        .filter((items) => items.length);
-      const allItems = cardLists.flat();
 
-      // Pre-hide list items so they don't flash before the trigger fires
-      if (allItems.length) gsap.set(allItems, { opacity: 0 });
+      // Each card animates independently when IT scrolls into view, with the
+      // SAME params — so every plan animates exactly like the FREE card. On
+      // desktop the three sit side-by-side and fire together; on mobile they are
+      // stacked, so each fires as the user reaches that specific card.
+      cards.forEach((card) => {
+        const items = card.querySelectorAll('ul li');
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top 75%',
-          once: true,
-        },
-      });
+        // Pre-hide list items so they don't flash before the trigger fires
+        if (items.length) gsap.set(items, { opacity: 0 });
 
-      // 1) All 3 cards rise from below + slight zoom-in, simultaneously
-      tl.fromTo(
-        cards,
-        { opacity: 0, y: 140, scale: 0.95 },
-        { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: 'power3.out' }
-      );
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 75%',
+            once: true,
+          },
+        });
 
-      // 2) Bullet items: EXACT params from animateSlideList in scroll-features
-      //    section (duration 0.7, power2.out, stagger 0.18, delay 0.35).
-      //    All 3 lists start at the same timeline position so they cascade in
-      //    parallel (their items advance together row-by-row).
-      tl.addLabel('lists', 0.35);
-      cardLists.forEach((items) => {
-        tl.to(
-          items,
-          { opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.18 },
-          'lists'
+        // 1) Card rises from below + slight zoom-in
+        tl.fromTo(
+          card,
+          { opacity: 0, y: 140, scale: 0.95 },
+          { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: 'power3.out' }
         );
+
+        // 2) Bullet items — EXACT params from the FREE card (duration 0.7,
+        //    power2.out, stagger 0.18), starting 0.35s into this card's timeline.
+        if (items.length) {
+          tl.to(
+            items,
+            { opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.18 },
+            0.35
+          );
+        }
       });
     })();
   </script>
