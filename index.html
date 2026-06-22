@@ -929,7 +929,8 @@
          Smaller padding, narrower label column, tighter row gap, shorter header gap,
          smaller header text, and reduced review box top margin. */
       #scroll-features .sf-rcard {
-        padding: 16px;
+        width: 100%;
+        padding: 0;
       }
       #scroll-features .sf-rcard .text-4xl {
         font-size: 28px;
@@ -2200,7 +2201,7 @@
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
           <!-- ===== LEFT: region data ===== -->
-          <div class="im-detail" id="imDetail">
+          <div class="im-detail min-w-0" id="imDetail">
             <!-- Desktop heading — full sentence, updated by JS -->
             <h2 class="h1 font-semibold text-fg leading-tight mb-3 hidden lg:block" id="imName">Doing Business in Emilia-Romagna</h2>
             <!-- Mobile heading — region as a custom button dropdown -->
@@ -2219,7 +2220,7 @@
             <p class="body-md text-fg-muted mb-8 lg:mb-10 max-w-md" id="imTagline">
               A powerhouse of Italian industry, innovation, and food excellence.
             </p>
-            <dl class="grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-6 mb-8 lg:mb-10">
+            <dl class="grid grid-cols-[max-content_max-content] gap-x-16 lg:grid-cols-4 lg:gap-x-5 gap-y-6 mb-8 lg:mb-10">
               <div>
                 <dt class="text-2xl lg:text-3xl font-medium text-fg leading-none" id="imCompanies">447,000+</dt>
                 <dd class="text-sm text-fg-muted mt-0.5">Companies</dd>
@@ -2600,59 +2601,59 @@
               <thead>
                 <tr class="border-b border-border bg-[#e5e7eb]">
                   <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg w-[34%]">Capability</th>
-                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg">
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg whitespace-nowrap">
                     <div class="flex items-center gap-2">
                       <img src="assets/logo-dark.svg" alt="" aria-hidden="true" class="h-5 w-auto" />
                       Minerva
                     </div>
                   </th>
-                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg">Traditional Business Discovery</th>
+                  <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg whitespace-nowrap">Traditional Business Discovery</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Verified company identity</th>
-                  <td class="py-4 px-5 lg:px-6 align-top">
+                  <td class="py-4 px-5 lg:px-6 align-top whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>Camera di Commercio</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Self-reported or manually verified</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted whitespace-nowrap">Self-reported or manually verified</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cultural-fit signal</th>
-                  <td class="py-4 px-5 lg:px-6 align-top">
+                  <td class="py-4 px-5 lg:px-6 align-top whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>47 dimensions</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-fg-subtle"><path d="M5 12h14"/></svg>None</span>
                   </td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Time to first qualified match</th>
-                  <td class="py-4 px-5 lg:px-6 align-top font-mono">
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>~72 h</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono">Weeks or months</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted font-mono whitespace-nowrap">Weeks or months</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Cost transparency</th>
-                  <td class="py-4 px-5 lg:px-6 align-top font-mono">
+                  <td class="py-4 px-5 lg:px-6 align-top font-mono whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>€0 – €39 / mo</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Variable and unpredictable</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted whitespace-nowrap">Variable and unpredictable</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">Signal-to-noise</th>
-                  <td class="py-4 px-5 lg:px-6 align-top">
+                  <td class="py-4 px-5 lg:px-6 align-top whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>Ranked list of qualified matches</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Search and outreach based</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted whitespace-nowrap">Search and outreach based</td>
                 </tr>
                 <tr>
                   <th scope="row" class="text-left py-4 px-5 lg:px-6 font-medium text-fg align-top">GDPR posture</th>
-                  <td class="py-4 px-5 lg:px-6 align-top">
+                  <td class="py-4 px-5 lg:px-6 align-top whitespace-nowrap">
                     <span class="inline-flex items-center gap-1.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>EU-resident by design</span>
                   </td>
-                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted">Depends on provider</td>
+                  <td class="py-4 px-5 lg:px-6 align-top text-fg-muted whitespace-nowrap">Depends on provider</td>
                 </tr>
               </tbody>
             </table>
@@ -2873,28 +2874,27 @@
           <!-- ===== FREE ===== -->
           <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
                         <!-- Header: icon + name -->
-            <div class="flex items-center gap-3 mb-6 lg:mb-8">
+            <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-free.svg" alt="" width="37" height="37" aria-hidden="true" />
               <h3 class="text-[28px] lg:text-[34px] font-semibold text-fg">FREE</h3>
             </div>
 
             <!-- Description -->
-            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-6 lg:mb-8">
+            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-5 lg:mb-6">
               Perfect for discovering companies and understanding your compatibility potential.
             </p>
 
             <!-- Price + CTA -->
-            <div class="flex items-center justify-between gap-3 mb-8 lg:mb-10">
+            <div class="flex items-center justify-between gap-3 mb-5 lg:mb-6">
               <div class="flex items-baseline gap-1">
-                <span class="text-[26px] lg:text-[32px] font-medium text-fg leading-none">€0</span>
-                <span class="text-base text-fg-muted">/ month</span>
+                <span class="text-2xl lg:text-[32px] font-medium text-fg leading-none">€0</span>
+                <span class="text-sm text-fg-muted">/ month</span>
               </div>
               <a href="#cta" class="inline-flex items-center justify-center h-11 px-9 rounded-full border border-border-strong bg-white text-fg text-[0.9375rem] font-semibold hover:bg-surface-alt transition-colors">Start</a>
             </div>
 
-            <!-- spacer after CTA -->
-<!-- Features -->
-            <p class="text-sm font-semibold text-fg mb-4">Includes:</p>
+            <!-- Features -->
+            <p class="text-sm font-semibold text-fg mb-3">Includes:</p>
             <ul class="space-y-3">
               <li class="flex items-start gap-3 text-[0.9375rem] text-fg">
                 <img src="assets/icons/bullet.svg" alt="" width="10" height="10" aria-hidden="true" class="shrink-0 mt-[7px]" />
@@ -2934,28 +2934,27 @@
           <!-- ===== SMART ===== -->
           <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
                         <!-- Header -->
-            <div class="flex items-center gap-3 mb-6 lg:mb-8">
+            <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-smart.svg" alt="" width="37" height="37" aria-hidden="true" />
               <h3 class="text-[28px] lg:text-[34px] font-semibold text-fg">SMART</h3>
             </div>
 
             <!-- Description -->
-            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-6 lg:mb-8">
+            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-5 lg:mb-6">
               Gain full visibility into companies, reputation, and compatibility.
             </p>
 
             <!-- Price + CTA -->
-            <div class="flex items-center justify-between gap-3 mb-8 lg:mb-10">
+            <div class="flex items-center justify-between gap-3 mb-5 lg:mb-6">
               <div class="flex items-baseline gap-1">
-                <span class="text-[26px] lg:text-[32px] font-medium text-fg leading-none">€19</span>
-                <span class="text-base text-fg-muted">/ month</span>
+                <span class="text-2xl lg:text-[32px] font-medium text-fg leading-none">€19</span>
+                <span class="text-sm text-fg-muted">/ month</span>
               </div>
               <a href="#cta" class="inline-flex items-center justify-center h-11 px-9 rounded-full bg-fg text-bg text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity">Select</a>
             </div>
 
-            <!-- spacer after CTA -->
-<!-- Features -->
-            <p class="text-sm font-semibold text-fg mb-4">Everything in Free, plus:</p>
+            <!-- Features -->
+            <p class="text-sm font-semibold text-fg mb-3">Everything in Free, plus:</p>
             <ul class="space-y-3">
               <li class="flex items-start gap-3 text-[0.9375rem] text-fg">
                 <img src="assets/icons/bullet.svg" alt="" width="10" height="10" aria-hidden="true" class="shrink-0 mt-[7px]" />
@@ -2992,7 +2991,7 @@
             </ul>
 
             <!-- Note -->
-            <p class="text-xs text-fg-muted italic mb-8 lg:mb-10">
+            <p class="text-sm text-fg-muted mt-3">
               Note: Direct contact information is not included.
             </p>
           </article>
@@ -3000,28 +2999,27 @@
           <!-- ===== PREMIUM ===== -->
           <article class="rounded-[1.5rem] p-3.5 lg:p-[18px] flex flex-col hover:bg-[#F1F4F8] transition-colors duration-200">
                         <!-- Header -->
-            <div class="flex items-center gap-3 mb-6 lg:mb-8">
+            <div class="flex items-center gap-3 mb-5 lg:mb-6">
               <img src="assets/icons/plan-premium.svg" alt="" width="37" height="37" aria-hidden="true" />
               <h3 class="text-[28px] lg:text-[34px] font-semibold text-fg">PREMIUM</h3>
             </div>
 
             <!-- Description -->
-            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-6 lg:mb-8">
+            <p class="text-fg-muted text-[0.9375rem] leading-relaxed mb-5 lg:mb-6">
               Turn qualified matches into real business relationships.
             </p>
 
             <!-- Price + CTA -->
-            <div class="flex items-center justify-between gap-3 mb-8 lg:mb-10">
+            <div class="flex items-center justify-between gap-3 mb-5 lg:mb-6">
               <div class="flex items-baseline gap-1">
-                <span class="text-[26px] lg:text-[32px] font-medium text-fg leading-none">€39</span>
-                <span class="text-base text-fg-muted">/ month</span>
+                <span class="text-2xl lg:text-[32px] font-medium text-fg leading-none">€39</span>
+                <span class="text-sm text-fg-muted">/ month</span>
               </div>
               <a href="#cta" class="inline-flex items-center justify-center h-11 px-9 rounded-full bg-fg text-bg text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity">Select</a>
             </div>
 
-            <!-- spacer after CTA -->
-<!-- Features -->
-            <p class="text-sm font-semibold text-fg mb-4">Everything in Smart, plus:</p>
+            <!-- Features -->
+            <p class="text-sm font-semibold text-fg mb-3">Everything in Smart, plus:</p>
             <ul class="space-y-3">
               <li class="flex items-start gap-3 text-[0.9375rem] text-fg">
                 <img src="assets/icons/bullet.svg" alt="" width="10" height="10" aria-hidden="true" class="shrink-0 mt-[7px]" />
@@ -3211,7 +3209,7 @@
               <img src="assets/icons/faq-contact.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
               <span class="font-semibold text-fg">Have more questions?</span>
             </div>
-            <a href="#contact" class="inline-flex items-center justify-center h-9 px-5 rounded-full border border-border-strong bg-white text-fg text-sm font-semibold hover:bg-surface-alt transition-colors">
+            <a href="#contact" class="inline-flex items-center justify-center shrink-0 whitespace-nowrap h-9 px-5 rounded-full border border-border-strong bg-white text-fg text-sm font-semibold hover:bg-surface-alt transition-colors">
               Contact us
             </a>
           </div>
