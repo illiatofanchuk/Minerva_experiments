@@ -61,6 +61,8 @@
       --primary-hover: #1E293B;
       --accent: #0369A1;
       --accent-strong: #075985;
+      --accent-tint: rgba(3, 105, 161, 0.1);
+      --accent-soft: rgba(3, 106, 162, 0.6);
       --border: #E2E8F0;
       --border-strong: #CBD5E1;
       --muted: #E8ECF1;
@@ -78,6 +80,8 @@
       --primary-hover: #F1F5F9;
       --accent: #38BDF8;
       --accent-strong: #7DD3FC;
+      --accent-tint: rgba(56, 189, 248, 0.12);
+      --accent-soft: rgba(56, 189, 248, 0.5);
       --border: #222A36;
       --border-strong: #2E3847;
       --muted: #1A2230;
@@ -142,6 +146,10 @@
       overflow: hidden;
       transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
+    /* FAQ icons: keep their original pale (#CCD1DF) color in light mode; only
+       tone them down slightly in dark so they're not overly bright. */
+    .dark #faq img { filter: brightness(0.74); }
 
     /* Comparison table row hover */
     tbody tr:hover { background-color: var(--surface-alt); }
@@ -389,7 +397,7 @@
     /* Pricing cards: hover bg only on hover-capable (desktop) devices, so a
        tap on touch screens never leaves a sticky highlight. */
     @media (hover: hover) {
-      #pricing article:hover { background-color: #F1F4F8; }
+      #pricing article:hover { background-color: var(--surface-alt); }
     }
     @media (prefers-reduced-motion: reduce) {
       .tt-track { animation: none; }
@@ -411,30 +419,30 @@
     }
     .im-map-wrap svg { width: 100%; height: auto; display: block; }
     .im-path {
-      fill: #E2E8F0;
-      stroke: #fff;
+      fill: var(--border);          /* region body */
+      stroke: var(--bg);            /* gaps between regions = page bg */
       stroke-width: 1;
       cursor: pointer;
       transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
     }
     .im-path:hover {
-      fill: rgba(3, 106, 162, 0.6);     /* accent #036AA2 @ 60% */
-      stroke: #036AA2;
+      fill: var(--accent-soft);     /* accent @ ~60% */
+      stroke: var(--accent);
       stroke-width: 1.5;
     }
     .im-path.is-active {
-      fill: #3C4352;
-      stroke: #1F2937;
+      fill: var(--fg);              /* selected region: high-contrast in both themes */
+      stroke: var(--bg);
       stroke-width: 2;
     }
-    .im-path.is-active:hover { fill: #3C4352; }  /* don't double-treat the selected region */
+    .im-path.is-active:hover { fill: var(--fg); }  /* don't double-treat the selected region */
 
     /* Floating tooltip */
     .im-tooltip {
       position: fixed;
       pointer-events: none;
-      background: #fff;
-      border: 1px solid #E5E7EB;
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 14px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -453,21 +461,21 @@
     .im-tt-name {
       font-size: 16px;          /* +20% over the tooltip's 13px base */
       font-weight: 600;
-      color: #0F172A;
+      color: var(--fg);
       margin-bottom: 4px;
     }
     .im-tt-stats {
-      color: #475569;
+      color: var(--fg-muted);
       font-size: 12px;
       display: flex;
       gap: 10px;
     }
-    .im-tt-stats span strong { color: #0F172A; font-weight: 600; }
+    .im-tt-stats span strong { color: var(--fg); font-weight: 600; }
     .im-tt-hint {
       margin-top: 6px;
       padding-top: 6px;
-      border-top: 1px solid #E5E7EB;
-      color: #94A3B8;
+      border-top: 1px solid var(--border);
+      color: var(--fg-subtle);
       font-size: 11px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -491,15 +499,15 @@
       border: 0;
       cursor: pointer;
       position: relative;
-      color: var(--color-fg-muted, #64748B);
+      color: var(--fg-subtle);
       transform-origin: left center;
       transform: scale(var(--scale));
       will-change: transform;
       transition: color 0.4s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .sf-ind-item:hover { color: var(--color-fg, #0F172A); }
-    .sf-ind-item.is-active { color: var(--color-fg, #0F172A); }
+    .sf-ind-item:hover { color: var(--fg); }
+    .sf-ind-item.is-active { color: var(--fg); }
 
     .sf-ind-idx {
       font-family: inherit;            /* Google Sans Flex from <body> */
@@ -513,7 +521,7 @@
     }
     .sf-ind-item.is-active .sf-ind-idx {
       opacity: 1;
-      color: var(--color-accent, #036AA2);
+      color: var(--accent);
     }
 
     .sf-ind-label {
@@ -999,7 +1007,7 @@
       justify-content: center;
       gap: 12px;
       padding: 14px 20px;
-      background: #EDEFF2;
+      background: var(--surface-alt);
       border-radius: 9999px;
       user-select: none;
     }
@@ -1008,22 +1016,22 @@
       height: 8px;
       width: 8px;
       border-radius: 9999px;
-      background: #CBD5E1;
+      background: var(--border-strong);
       overflow: hidden;
       flex: 0 0 auto;
       transition: width .45s cubic-bezier(.22, 1, .36, 1),
                   background-color .35s ease;
     }
-    .sf-seg.is-done { background: #1E293B; }
+    .sf-seg.is-done { background: var(--fg); }
     .sf-seg.is-active {
       width: 48px;
-      background: #CBD5E1;
+      background: var(--border-strong);
     }
     .sf-fill {
       position: absolute;
       inset: 0 auto 0 0;
       width: 0%;
-      background: #1E293B;
+      background: var(--fg);
       border-radius: 9999px;
       transition: width .08s linear;
     }
@@ -1068,7 +1076,7 @@
 <body class="bg-bg text-fg antialiased">
 
   <!-- =================================== NAV =================================== -->
-  <header id="siteHeader" class="sticky top-0 z-50 bg-white border-b border-border">
+  <header id="siteHeader" class="sticky top-0 z-50 bg-surface border-b border-border">
     <div class="max-w-container mx-auto px-6 lg:px-8">
       <nav class="flex h-16 items-center justify-between">
         <a href="#top" class="flex items-center gap-2.5 -ml-1 px-1 py-1 rounded">
@@ -2133,7 +2141,7 @@
     </section>
 
     <!-- =================================== INDUSTRIES (VERTICALS) — clickable list + detail panel =================================== -->
-    <section aria-labelledby="industries-it" class="py-20 lg:py-28 bg-surface-alt border-y border-border">
+    <section aria-labelledby="industries-it" class="py-20 lg:py-28 bg-surface-alt dark:bg-bg border-y border-border">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
@@ -2193,7 +2201,7 @@
               <p class="sf-ind-desc-lead body-md text-fg font-medium mb-3"></p>
               <p class="sf-ind-desc-body body-md text-fg-muted"></p>
             </div>
-            <button type="button" class="sf-ind-cta inline-flex items-center gap-2 px-2 py-2 rounded-md text-fg font-semibold hover:bg-[#3C43520D] transition-colors group">
+            <button type="button" class="sf-ind-cta inline-flex items-center gap-2 px-2 py-2 rounded-md text-fg font-semibold hover:bg-surface-alt transition-colors group">
               <span>Find matches</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -2431,7 +2439,7 @@
           <!-- Mockup: Verified Profile -->
           <div class="bg-surface border border-border rounded-xl p-6 lg:p-7 lg:order-1" aria-hidden="true">
             <div class="flex items-center gap-3 mb-5">
-              <div class="h-10 w-10 rounded-lg flex items-center justify-center" style="background-color: rgba(3, 105, 161, 0.1); color: var(--accent);">
+              <div class="h-10 w-10 rounded-lg flex items-center justify-center" style="background-color: var(--accent-tint); color: var(--accent);">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="m9 12 2 2 4-4" />
                   <path d="M21.801 10A10 10 0 1 1 17 3.335" />
@@ -2598,7 +2606,7 @@
     </section>
 
     <!-- =================================== COMPARISON =================================== -->
-    <section class="py-20 lg:py-28 bg-[#f1f4f8] border-y border-border">
+    <section class="py-20 lg:py-28 bg-surface-alt border-y border-border">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="mb-12 lg:mb-16">
           <p class="text-sm font-medium text-accent mb-3">Compared to alternatives</p>
@@ -2609,7 +2617,7 @@
           <div class="overflow-x-auto">
             <table class="w-full text-[0.9375rem]">
               <thead>
-                <tr class="border-b border-border bg-[#e5e7eb]">
+                <tr class="border-b border-border bg-surface-alt dark:bg-surface">
                   <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg w-[34%]">Capability</th>
                   <th scope="col" class="text-left py-4 px-5 lg:px-6 font-semibold text-fg whitespace-nowrap">
                     <div class="flex items-center gap-2">
@@ -2705,10 +2713,10 @@
             <div class="tt-track">
               <!-- ===== Set 1 (semantic) ===== -->
           <!-- Testimonial 1: Marco Rossi · Tessuti Belluno -->
-          <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col">
+          <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col">
             <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Manufacturing</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Manufacturing</span>
             </div>
             <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
               In three weeks we found five strategic partners for our production chain. Companies that share our values on sustainability and artisanal quality. No cold leads — just conversations that made sense from the very first contact.
@@ -2732,10 +2740,10 @@
           </article>
 
           <!-- Testimonial 2: Lorenzo Bianchi · Aurora Digital -->
-          <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col">
+          <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col">
             <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Technology</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Technology</span>
             </div>
             <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
               We connected Aurora Digital with three enterprise clients in under a month. The platform really understands the Italian B2B context — ATECO codes, specific sectors, company sizes. An essential tool if you're growing in the Italian market.
@@ -2759,10 +2767,10 @@
           </article>
 
           <!-- Testimonial 3: Maria Esposito · Conserve Nonna Maria -->
-          <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col">
+          <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col">
             <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Food &amp; Beverage</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Food &amp; Beverage</span>
             </div>
             <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
               For a small family business like ours, Minerva opened contacts with distributors and restaurateurs we would never have found at trade fairs. The anonymous reviews from other partners helped us choose who to work with.
@@ -2786,10 +2794,10 @@
           </article>
 
               <!-- ===== Set 2 (duplicate for seamless loop — aria-hidden) ===== -->
-              <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
+              <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
                 <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Manufacturing</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Manufacturing</span>
             </div>
                 <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
                   In three weeks we found five strategic partners for our production chain. Companies that share our values on sustainability and artisanal quality. No cold leads — just conversations that made sense from the very first contact.
@@ -2812,10 +2820,10 @@
                 </div>
               </article>
 
-              <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
+              <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
                 <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Technology</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Technology</span>
             </div>
                 <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
                   We connected Aurora Digital with three enterprise clients in under a month. The platform really understands the Italian B2B context — ATECO codes, specific sectors, company sizes. An essential tool if you're growing in the Italian market.
@@ -2838,10 +2846,10 @@
                 </div>
               </article>
 
-              <article class="bg-[#f1f4f8] rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
+              <article class="bg-surface-alt rounded-3xl p-6 lg:p-7 flex flex-col" aria-hidden="true">
                 <div class="flex items-start justify-between mb-3">
               <img src="assets/icons/quotation.svg" alt="" width="32" height="32" aria-hidden="true" />
-              <span class="inline-flex px-2.5 py-1 rounded-full bg-white text-xs text-fg-muted">Food &amp; Beverage</span>
+              <span class="inline-flex px-2.5 py-1 rounded-full bg-surface text-xs text-fg-muted">Food &amp; Beverage</span>
             </div>
                 <p class="text-[0.9375rem] text-fg leading-relaxed mb-6 flex-1">
                   For a small family business like ours, Minerva opened contacts with distributors and restaurateurs we would never have found at trade fairs. The anonymous reviews from other partners helped us choose who to work with.
@@ -2900,7 +2908,7 @@
                 <span class="text-2xl lg:text-[32px] font-medium text-fg leading-none">€0</span>
                 <span class="text-sm text-fg-muted">/ month</span>
               </div>
-              <a href="#cta" class="inline-flex items-center justify-center h-11 px-9 rounded-full border border-border-strong bg-white text-fg text-[0.9375rem] font-semibold hover:bg-surface-alt transition-colors">Start</a>
+              <a href="#cta" class="inline-flex items-center justify-center h-11 px-9 rounded-full border border-border-strong bg-surface text-fg text-[0.9375rem] font-semibold hover:bg-surface-alt transition-colors">Start</a>
             </div>
 
             <!-- Features -->
@@ -3111,7 +3119,7 @@
 
         <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
           <div class="space-y-3">
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-who-behind.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3125,7 +3133,7 @@
               </p>
             </div></div>
           </details>
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-results.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3139,7 +3147,7 @@
               </p>
             </div></div>
           </details>
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-sector.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3153,7 +3161,7 @@
               </p>
             </div></div>
           </details>
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-different.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3170,7 +3178,7 @@
           </div>
 
           <div class="space-y-3">
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-cost.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3184,7 +3192,7 @@
               </p>
             </div></div>
           </details>
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-small.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3198,7 +3206,7 @@
               </p>
             </div></div>
           </details>
-            <details class="group bg-surface rounded-xl">
+            <details class="group bg-surface dark:bg-[#242C3A] rounded-xl">
             <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer">
               <div class="flex items-center gap-4 min-w-0">
                 <img src="assets/icons/faq-data.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
@@ -3214,12 +3222,12 @@
           </details>
 
           <!-- "Have more questions?" — integrated as the last item of the right column -->
-          <div class="flex items-center justify-between gap-4 bg-surface rounded-xl px-5 h-[61px]">
+          <div class="flex items-center justify-between gap-4 bg-surface dark:bg-[#242C3A] rounded-xl px-5 h-[61px]">
             <div class="flex items-center gap-4 min-w-0">
               <img src="assets/icons/faq-contact.svg" alt="" width="29" height="29" aria-hidden="true" class="shrink-0" />
               <span class="font-semibold text-fg">Have more questions?</span>
             </div>
-            <a href="#contact" class="inline-flex items-center justify-center shrink-0 whitespace-nowrap h-9 px-5 rounded-full border border-border-strong bg-white text-fg text-sm font-semibold hover:bg-surface-alt transition-colors">
+            <a href="#contact" class="inline-flex items-center justify-center shrink-0 whitespace-nowrap h-9 px-5 rounded-full border border-border-strong bg-surface text-fg text-sm font-semibold hover:bg-surface-alt transition-colors">
               Contact us
             </a>
           </div>
@@ -4240,7 +4248,7 @@
         if (els.districts) {
           els.districts.innerHTML = (r.districts || []).map((d) => `
             <li>
-              <div class="text-sm font-semibold text-[#475569]">${escapeHtml(d.name)}</div>
+              <div class="text-sm font-semibold text-fg-muted dark:text-fg">${escapeHtml(d.name)}</div>
               <div class="text-sm text-fg-muted mt-0.5">${escapeHtml(d.description)}</div>
             </li>
           `).join('');
