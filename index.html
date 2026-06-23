@@ -63,6 +63,10 @@
       --accent-strong: #075985;
       --accent-tint: rgba(3, 105, 161, 0.1);
       --accent-soft: rgba(3, 106, 162, 0.6);
+      --bg-glow: rgba(3, 105, 161, 0.20);
+      --mesh-1: rgba(3, 105, 161, 0.22);
+      --mesh-2: rgba(7, 89, 133, 0.16);
+      --mesh-3: rgba(37, 99, 235, 0.12);
       --border: #E2E8F0;
       --border-strong: #CBD5E1;
       --muted: #E8ECF1;
@@ -82,13 +86,50 @@
       --accent-strong: #7DD3FC;
       --accent-tint: rgba(56, 189, 248, 0.12);
       --accent-soft: rgba(56, 189, 248, 0.5);
+      --bg-glow: rgba(56, 189, 248, 0.18);
+      --mesh-1: rgba(56, 189, 248, 0.18);
+      --mesh-2: rgba(125, 211, 252, 0.10);
+      --mesh-3: rgba(14, 116, 200, 0.22);
       --border: #222A36;
       --border-strong: #2E3847;
       --muted: #1A2230;
       --success: #22C55E;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    /* Fixed page-bottom gradient — anchored to the viewport bottom, sits behind
+       all content (z-index:-1) above the base bg. Transparent sections reveal
+       it; sections with an opaque background cover it. */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      /* Mesh gradient (like the supplied radial): transparent core top-center,
+         accent glow around the bottom AND the sides. The base periphery radial
+         keeps it edge-anchored (never floats); two lower-side blobs drift to
+         make it a living mesh. Brand accent only; frozen for reduced-motion. */
+      background-color: transparent;
+      background-image:
+        radial-gradient(45% 55% at 8% 92%,  var(--mesh-1), transparent 70%),
+        radial-gradient(48% 58% at 92% 92%, var(--mesh-2), transparent 70%),
+        radial-gradient(130% 125% at 50% 0%, transparent 48%, var(--mesh-3) 100%);
+      background-repeat: no-repeat;
+      background-size: 150% 150%, 150% 150%, 100% 100%;
+      background-position: 8% 92%, 92% 92%, 50% 0%;
+      animation: mesh-drift 20s ease-in-out infinite alternate;
+    }
+    @keyframes mesh-drift {
+      from { background-position:  4% 98%, 96% 98%, 50% 0%; }
+      to   { background-position: 18% 78%, 82% 78%, 50% 0%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-glow { animation: none !important; }
+    }
+    /* Hide the background gradient on mobile/tablet (desktop-only feature) */
+    @media (max-width: 1023px) {
+      .bg-glow { display: none; }
+    }
     body {
       font-family: 'Google Sans Flex', system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -1073,7 +1114,9 @@
   </style>
 </head>
 
-<body class="bg-bg text-fg antialiased">
+<body class="text-fg antialiased">
+  <!-- Fixed page-bottom gradient (behind content); revealed by transparent sections -->
+  <div class="bg-glow" aria-hidden="true"></div>
 
   <!-- =================================== NAV =================================== -->
   <header id="siteHeader" class="sticky top-0 z-50 bg-surface border-b border-border">
@@ -1390,14 +1433,23 @@
                   <div class="pointer-events-none absolute inset-y-0 right-0 w-10 z-10" style="background: linear-gradient(to left, var(--surface), transparent);"></div>
                 </div>
                 <!-- Accent growth chart — bleeds to card edges, gradient fades into card bg -->
-                <div class="-mx-6 lg:-mx-7 -mb-6 lg:-mb-7 mt-8">
-                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="supplier-chart block w-full h-24 lg:h-64" aria-hidden="true">
+                <div class="-mx-6 lg:-mx-7 -mb-6 lg:-mb-7 mt-8 relative">
+                  <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="supplier-chart block w-full h-40 lg:h-64" aria-hidden="true">
                     <defs>
                       <linearGradient id="supplier-growth" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.32" />
                         <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
                       </linearGradient>
                     </defs>
+                    <!-- Reference grid (behind the curve) -->
+                    <g stroke="var(--border)" opacity="0.6">
+                      <line x1="0" y1="30" x2="400" y2="30" vector-effect="non-scaling-stroke" />
+                      <line x1="0" y1="60" x2="400" y2="60" vector-effect="non-scaling-stroke" />
+                      <line x1="0" y1="90" x2="400" y2="90" vector-effect="non-scaling-stroke" />
+                      <line x1="100" y1="0" x2="100" y2="120" vector-effect="non-scaling-stroke" />
+                      <line x1="200" y1="0" x2="200" y2="120" vector-effect="non-scaling-stroke" />
+                      <line x1="300" y1="0" x2="300" y2="120" vector-effect="non-scaling-stroke" />
+                    </g>
                     <!-- Wrapped in <g class="chart-content"> for unified clip-path reveal -->
                     <g class="chart-content">
                       <!-- Filled area under curve -->
@@ -1408,6 +1460,17 @@
                             stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke" />
                     </g>
                   </svg>
+                  <!-- Axis nomenclature (desktop) — justifies what the curve represents -->
+                  <span class="hidden lg:block absolute left-3 top-1/2 -translate-y-1/2 [writing-mode:vertical-rl] rotate-180 text-[11px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">Level of growth</span>
+                  <span class="hidden lg:block absolute bottom-2 right-6 text-[11px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">N. of partnerships</span>
+                  <!-- Y ticks (growth multiple) — aligned to the horizontal gridlines -->
+                  <span class="block absolute left-9 top-[25%] -translate-y-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">3×</span>
+                  <span class="block absolute left-9 top-[50%] -translate-y-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">2×</span>
+                  <span class="block absolute left-9 top-[75%] -translate-y-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">1×</span>
+                  <!-- X ticks (partnership count) — aligned to the vertical gridlines -->
+                  <span class="block absolute bottom-6 left-1/4 -translate-x-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">100</span>
+                  <span class="block absolute bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">200</span>
+                  <span class="block absolute bottom-6 left-3/4 -translate-x-1/2 text-[10px] font-medium text-fg-subtle tracking-wide pointer-events-none select-none">300</span>
                 </div>
               </article>
 
@@ -2681,7 +2744,7 @@
     </section>
 
     <!-- =================================== TESTIMONIALS =================================== -->
-    <section aria-labelledby="testimonials" class="py-20 lg:py-28">
+    <section aria-labelledby="testimonials" class="py-20 lg:py-28 bg-bg">
       <div class="max-w-container mx-auto px-6 lg:px-8">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
